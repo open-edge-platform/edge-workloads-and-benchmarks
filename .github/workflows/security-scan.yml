@@ -30,7 +30,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Run Zizmor scan
-        uses: open-edge-platform/geti-ci/actions/zizmor@829f7148f9f70bd4ffbb367f7374d78c32aef2a2
+        uses: open-edge-platform/geti-ci/actions/zizmor@eac3c48b3404ab21827cf2fbbeab8669fb282d52
         with:
           scan-scope: "all"
           severity-level: "LOW"
@@ -48,7 +48,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Run Bandit scan
-        uses: open-edge-platform/geti-ci/actions/bandit@829f7148f9f70bd4ffbb367f7374d78c32aef2a2
+        uses: open-edge-platform/geti-ci/actions/bandit@eac3c48b3404ab21827cf2fbbeab8669fb282d52
         with:
           scan-scope: "all"
           severity-level: "LOW"
@@ -67,7 +67,7 @@ jobs:
           persist-credentials: false
       - name: Run Trivy scan
         id: trivy
-        uses: open-edge-platform/geti-ci/actions/trivy@829f7148f9f70bd4ffbb367f7374d78c32aef2a2
+        uses: open-edge-platform/geti-ci/actions/trivy@eac3c48b3404ab21827cf2fbbeab8669fb282d52
         with:
           scan_type: "fs"
           scan-scope: all
