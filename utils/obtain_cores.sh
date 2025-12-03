@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 # Detect core types with multi-tier redundancy:
-# Confirm Multi-Socker (Xeon, assume all P-Cores across all sockets)
+# Confirm Multi-Socket (Xeon, assume all P-Cores across all sockets)
 # Use CPUID to determine Intel Core vs Intel Atom (Guarantee P-Cores)
 # Opportunistically check sysfs for core/atom/lowpower assignments (Guarantee P-Cores)
 # Fallback to L1d cache size drop detection and topology (Guarantee LP-E Cores)
