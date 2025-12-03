@@ -1,0 +1,15 @@
+openvino
+nncf
+numpy
+matplotlib
+polars
+pyyaml
+pillow
+psutil
+requests
+scipy
+ultralytics==8.3.59
+torch
+torchvision
+kagglehub
+opencv-python

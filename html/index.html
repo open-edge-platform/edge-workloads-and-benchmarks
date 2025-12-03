@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<!--
+SPDX-FileCopyrightText: (C) 2024-2025 Intel Corporation
+SPDX-License-Identifier: Apache-2.0
+-->
+
+<html lang='en'>
+<head>
+<meta charset='utf-8'/>
+<title>Edge Workloads and Benchmarks Pipeline Dashboard</title>
+<meta name='viewport' content='width=device-width,initial-scale=1'/>
+<link rel='preconnect' href='https://fonts.googleapis.com'>
+<link rel='preconnect' href='https://fonts.gstatic.com' crossorigin>
+<link href='https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap' rel='stylesheet'>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1 id="dashboardTitle">Edge Workloads and Benchmarks Pipeline Dashboard</h1>
+    <p>Aggregate performance, power and efficiency metrics across different pipeline configurations, device pairings, and batch sizes.</p>
+  </header>
+
+  <div class="dashboard-grid">
+    <div class='card chart-grid'>
+      <div class="chart-item">
+        <h2 class="chart-title">Total Throughput (FPS)</h2>
+        <div id='legendThroughput' class='legend legend-centered'></div>
+        <div class='chart-container'>
+          <canvas id='thrChart'></canvas>
+        </div>
+        <div class="chart-footer">Higher is better</div>
+      </div>
+      <div class="chart-item">
+        <h2 class="chart-title">Efficiency (FPS/W)</h2>
+        <div id='legendEfficiency' class='legend legend-centered'></div>
+        <div class='chart-container'>
+          <canvas id='effChart'></canvas>
+        </div>
+        <div class="chart-footer">Higher is better</div>
+      </div>
+      <div class="chart-item">
+        <h2 class="chart-title">
+          Theoretical Streams (@30fps)
+          <span class="tooltip-trigger">
+            ?
+            <span class="tooltip">
+              Maximum number of concurrent video streams that could theoretically be processed while maintaining 30 fps ±5% per stream. Calculated as: Total FPS / (30 fps × 0.95).
+            </span>
+          </span>
+        </h2>
+        <div id='legendTheoretical' class='legend legend-centered'></div>
+        <div class='chart-container'>
+          <canvas id='theoChart'></canvas>
+        </div>
+        <div class="chart-footer">Higher is better</div>
+      </div>
+      <div class="chart-item">
+        <h2 class="chart-title">Package Power (W)</h2>
+        <div id='legendPower' class='legend legend-centered'></div>
+        <div class='chart-container'>
+          <canvas id='powerChart'></canvas>
+        </div>
+        <div class="chart-footer">Measurement only</div>
+      </div>
+    </div>
+
+    <p style="font-size: 0.9rem; margin-top: 1rem; margin-bottom: 1rem;">
+      <strong>Device Configurations:</strong> 
+      <em>[Device]-Only</em> = Detection and Classification on the same device • 
+      <em>Split</em> = Detection on Device #1 and Classification on Device #2 • 
+      <em>Concurrent</em> = Separate [Device]-Only pipelines running concurrently in separate processes
+    </p>
+
+    <div id="bestConfigSummary" class="card best-config-summary" style="display: none;">
+      <div class="best-config-header-container">
+        <h3>Best Configurations</h3>
+        <div class="best-config-toggle">
+          <button id="togglePerformance" class="toggle-btn active">Best Performance</button>
+          <button id="toggleEfficiency" class="toggle-btn">Best Efficiency</button>
+        </div>
+      </div>
+      <div id="bestConfigContent">
+        <!-- Best configurations populated here -->
+      </div>
+    </div>
+
+    <div class='card table-card'>
+      <h2>Summary Table</h2>
+      <div class='table-container'>
+        <table id='summaryTable'>
+          <thead>
+            <tr>
+              <th>Config</th>
+              <th>Device Configuration</th>
+              <th>Batch</th>
+              <th>Runs</th>
+              <th>Total FPS</th>
+              <th>Theoretical Streams</th>
+              <th>Avg Power (W)</th>
+              <th>Efficiency (FPS/W)</th>
+            </tr>
+          </thead>
+          <tbody id='summaryRows'></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class='card raw-data-card'>
+    <h2>Additional Information</h2>
+    <details>
+      <summary>Show/Hide System Information</summary>
+      <pre id='systemInfoDump'></pre>
+    </details>
+    <details style="margin-top: 1rem;">
+      <summary>Show/Hide Pipeline Definitions</summary>
+      <div class="table-container" style="margin-top: 1rem;">
+        <table>
+          <thead>
+            <tr>
+              <th>Config</th>
+              <th>Video</th>
+              <th>Detection</th>
+              <th>Classification</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>light</td>
+              <td>bears.h265 (2 obj/frame)</td>
+              <td>YOLOv11n (640x640) INT8</td>
+              <td>ResNet‑50 (224x224) INT8</td>
+            </tr>
+            <tr>
+              <td>medium</td>
+              <td>apple.h265 (1 obj/frame)</td>
+              <td>YOLOv5m (640x640) INT8</td>
+              <td>ResNet‑50 + MobileNet‑V2 (224x224) INT8</td>
+            </tr>
+            <tr>
+              <td>heavy</td>
+              <td>bears.h265 (2 obj/frame)</td>
+              <td>YOLOv11m (640x640) INT8</td>
+              <td>ResNet‑50 + MobileNet‑V2 (224x224) INT8</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </details>
+    <details style="margin-top: 1rem;">
+      <summary>Show/Hide Raw Data</summary>
+      <pre id='rawDump'></pre>
+    </details>
+  </div>
+
+  <footer class='footer'>
+    Generated by generate_report.py • Edge Workloads and Benchmarks
+  </footer>
+</div>
+
+<script src='https://cdn.jsdelivr.net/npm/chart.js'></script>
+<script src='dashboard.js'></script>
+</body>
+</html>

@@ -30,7 +30,7 @@ jobs:
           # FIXME: needed for tj-actions/changed-files to gather changed files, once repository becomes public this argument should be set to false
           persist-credentials: true
       - name: Run Zizmor scan
-        uses: open-edge-platform/geti-ci/actions/zizmor@829f7148f9f70bd4ffbb367f7374d78c32aef2a2
+        uses: open-edge-platform/geti-ci/actions/zizmor@eac3c48b3404ab21827cf2fbbeab8669fb282d52
         with:
           scan-scope: "changed"
           severity-level: "LOW"
@@ -49,7 +49,7 @@ jobs:
           # FIXME: needed for tj-actions/changed-files to gather changed files, once repository becomes public this argument should be set to false
           persist-credentials: true
       - name: Run Bandit scan
-        uses: open-edge-platform/geti-ci/actions/bandit@829f7148f9f70bd4ffbb367f7374d78c32aef2a2
+        uses: open-edge-platform/geti-ci/actions/bandit@eac3c48b3404ab21827cf2fbbeab8669fb282d52
         with:
           scan-scope: "changed"
           severity-level: "LOW"
