@@ -251,7 +251,7 @@ check_lscpu() {
     [[ ${#lscpu_assigned[@]} -gt 0 ]]
 }
 
-# Use sysfss validation for guaranteed assignments if available
+# Use sysfs validation for guaranteed assignments if available
 check_sysfs() {
     local core_cpus
     local expanded_cores
