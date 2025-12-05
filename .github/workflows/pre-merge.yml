@@ -27,8 +27,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
         with:
-          # FIXME: needed for tj-actions/changed-files to gather changed files, once repository becomes public this argument should be set to false
-          persist-credentials: true
+          persist-credentials: false
       - name: Run Zizmor scan
         uses: open-edge-platform/geti-ci/actions/zizmor@eac3c48b3404ab21827cf2fbbeab8669fb282d52
         with:
@@ -46,8 +45,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
         with:
-          # FIXME: needed for tj-actions/changed-files to gather changed files, once repository becomes public this argument should be set to false
-          persist-credentials: true
+          persist-credentials: false
       - name: Run Bandit scan
         uses: open-edge-platform/geti-ci/actions/bandit@eac3c48b3404ab21827cf2fbbeab8669fb282d52
         with:
@@ -56,3 +54,20 @@ jobs:
           confidence-level: "LOW"
           fail-on-findings: true
           output-format: "txt" # Use plain text output format to omit uploading code scanning results to Security tab
+
+  shellcheck-scan-pr:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+        with:
+          persist-credentials: false
+      - name: shellcheck # Static check shell scripts
+        uses: reviewdog/action-shellcheck@4c07458293ac342d477251099501a718ae5ef86e # v1.32.0
+        with:
+          github_token: ${{ secrets.github_token }}
+          reporter: github-pr-check
+          level: info
+          filter_mode: diff_context
