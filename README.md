@@ -48,7 +48,7 @@ xhost local:root
 setfacl -m user:1000:r ~/.Xauthority
 ```
 
-## Quick Start
+## Get Started
 
 The Makefile automates the entire workflow. use `make help` to display the following:
 
@@ -89,31 +89,31 @@ make clean-all        # Remove all generated collateral (models, media, results,
 - `CORES=pcore|ecore|lpecore` - CPU core pinning based off of core type
 - `PORT` - HTTP server port for dashboard (default: 8000)
 
-## Manual Setup (Alternative)
+### Manual Setup (Alternative)
 
 If you prefer step-by-step control:
 
-### Step 1: Prerequisites
+#### Step 1: Prerequisites
 ```bash
 cd setup/
 ./install_prerequisites.sh
 # Optional: --reinstall-gpu-driver=yes and/or --reinstall-npu-driver=yes
 ```
 
-### Step 2: Models  
+#### Step 2: Models
 ```bash
 cd ../model-conversion/
 ./convert_models.sh
 # Optional: -i "$HOME/datasets/imagenet-packages" for ImageNet quantization
 ```
 
-### Step 3: Media
+#### Step 3: Media
 ```bash
 cd ../media-downloader/
 ./download_and_encode.sh
 ```
 
-### Step 4: Run Benchmark
+#### Step 4: Run Benchmark
 ```bash
 cd ..
 ./benchmark_edge_pipelines.sh \
@@ -139,19 +139,35 @@ cd ..
 * `--concurrent` Enable concurrent GPU/NPU execution mode (optional)
 
 **Note:** GPU or NPU strongly recommended for AI inference workloads.
-### Step 5: Display Results
+#### Step 5: Display Results
 ```bash
 # Generate and view dashboard
 python3 html/generate_report.py
 cd html && python3 -m http.server 8000  # Access at http://localhost:8000
 ```
 
-## Output
+### Output
 
 Results are saved to `results/` organized by execution mode:
 
 * `*.log` – Full GStreamer pipeline output (stdout/stderr)
 * `*.csv` – Performance metrics (FPS, stream density, configuration)
+
+## Get Help or Contribute
+
+If you want to participate in the GitHub community for Edge Workloads and Benchmarks, you can
+contribute code, propose a design, download and try out a release, open an issue,
+benchmark application performance, and participate in
+[Discussions](https://github.com/open-edge-platform/edge-workloads-and-benchmarks/discussions).
+To learn more, check out the following resources:
+
+- [Open an issue](https://github.com/open-edge-platform/edge-workloads-and-benchmarks/issues)
+- [Submit a pull request](https://github.com/open-edge-platform/edge-workloads-and-benchmarks/pulls)
+- [Read the Contribution Guide](https://github.com/open-edge-platform/edge-microvisor-toolkit/blob/3.0/docs/developer-guide/emt-contribution.md)
+- [Report a security vulnerability](https://github.com/open-edge-platform/edge-workloads-and-benchmarks/blob/main/SECURITY.md)
+
+Before submitting a new report, check the existing issues to see if a similar one has not
+been filed already.
 
 ## License
 
