@@ -1,0 +1,23 @@
+LICENSE            @pluce17
+CONTRIBUTING.md    @pluce17
+CODE_OF_CONDUCT.md @pluce17
+SECURITY.md        @pluce17
+README.md          @pluce17
+
+# media-downloader
+/media-downloader/ @pluce17
+
+# model-conversion
+/model-conversion/ @pluce17
+/model-conversion/download-models/ @pluce17
+/model-conversion/scripts/ @pluce17
+
+# html dashboard display
+/html/ @pluce17
+
+# pipeline utils
+/utils/ @pluce17
+
+# setup scripts
+/setup/ @pluce17
+/setup/drivers/ @pluce17
