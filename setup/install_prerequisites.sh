@@ -145,7 +145,8 @@ add_user_to_group() {
     else
         $SUDO_PREFIX usermod -aG "$group" "$USER"
         if [ $? -eq 0 ]; then
-            return 1
+            echo -e "${GREEN}[ Success ]${NC} Added user $USER to group $group"
+            return 0
         else
             echo -e "${RED}[ Error ]${NC} Failed to add user to group $group"
             exit 1

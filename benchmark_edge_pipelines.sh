@@ -10,9 +10,12 @@ basedir="$(realpath "$(dirname -- "$0")")"
 Timestamp="$(date "+%Y%m%d-%H%M%S")"
 System="$(lscpu | grep "Model name" | grep -v "BIOS" | sed -n 's/^Model name://p' | sed 's/.*Intel/Intel/g')"
 
-# Target per-stream fps and margin of error (e.g., 0.95 == 95% of target. 30 * 0.95 = 28.5 fps)
+# Target per-stream fps and margin of error
+# Example: 0.95 == 95% of target. 30 * 0.95 = 28.5 fps
+# Example: 1.00 == 100% of target. 30 * 1.00 = 30.0 fps
+
 TARGET_FPS=30
-ERROR_MARGIN=0.95
+ERROR_MARGIN=1.00
 
 # Initialize parameters
 PipelineConfig="none"
@@ -375,7 +378,7 @@ if [[ -n "${Throughput}" && "${Throughput}" =~ ^[0-9]+([.][0-9]+)?$ ]]; then
 
     echo "[ Info ] Average Total Throughput: ${Throughput} fps"
     echo "[ Info ] Throughput per Stream (${NumStreams}): ${ThroughputPerStream} fps/stream"
-    echo "[ Info ] Theoretical Stream Density (@${TARGET_FPS} ±5%): ${TheoreticalStreams}"
+    echo "[ Info ] Theoretical Stream Density (@${TARGET_FPS}): ${TheoreticalStreams}"
 else
     echo "[ Error ] Could not parse throughput from log: ${ResultsDir}/${Filename}.log"
     Throughput="NA"
