@@ -130,6 +130,8 @@ benchmarks: clean
 		./benchmark_edge_pipelines.sh -p $$cfg -n 8 -b $$batch -d $$det -c $$cls -i $(DURATION) $$concurrent $$cores_opt || { \
 			echo "[ Error ] Benchmark run failed (cfg=$$cfg det=$$det cls=$$cls batch=$$batch $$concurrent)"; \
 			exit 1; \
+		echo "[ Info ] Sleeping for 10 seconds to prevent thermal throttling."; \
+		sleep 10; \
 		}; \
 	done; \
 	echo ""; \
