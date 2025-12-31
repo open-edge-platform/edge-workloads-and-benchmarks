@@ -1,8 +1,9 @@
 # Model Conversion and Quantization
 
-Download, convert, and quantize AI models for DLStreamer pipelines.
+Download, convert, and quantize AI models for Deep Learning Streamer (DL Streamer) pipelines.
 
 ### Model Collateral Matrix
+
 | Model Name   | Task           | Dimensions     | Dataset  | Source Model |
 |--------------|----------------|----------------|----------|--------------|
 | Yolo-v11n    | Detection      | 640x640 (INT8) | COCO     | [source](https://docs.ultralytics.com/models/yolo11/)   |
@@ -12,13 +13,14 @@ Download, convert, and quantize AI models for DLStreamer pipelines.
 | Mobilenet-V2 | Classification | 224x224 (INT8) | ImageNet | [source](https://pytorch.org/hub/pytorch_vision_mobilenet_v2/)   |
 
 ### Usage
+
 ```bash
 ./convert_models.sh
 ```
 
 ## ImageNet Accuracy Check for Classification Networks (Optional)
 
-CIFAR is used as a proxy dataset for classification network quantization. For classification accuracy validation, ImageNet is required.
+The CIFAR dataset is used as a proxy dataset for classification network quantization. For classification accuracy validation, the ImageNet dataset is required.
 
 ### ImageNet Dataset Setup
 
