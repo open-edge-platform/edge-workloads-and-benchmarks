@@ -127,8 +127,8 @@ download_raw "https://raw.githubusercontent.com/dlstreamer/pipeline-zoo-models/r
 download_raw "https://raw.githubusercontent.com/dlstreamer/pipeline-zoo-models/refs/heads/main/storage/yolov5m-640_INT8/yolo-v5.json" "${modeldir}/yolo-v5m/yolo-v5.json"
 
 mkdir -p "${modeldir}/resnet-50" "${modeldir}/mobilenet-v2"
-download_raw "https://raw.githubusercontent.com/open-edge-platform/edge-ai-libraries/refs/heads/main/libraries/dl-streamer/samples/gstreamer/model_proc/public/classification-optimized.json" "${modeldir}/resnet-50/resnet-50.json"
-download_raw "https://raw.githubusercontent.com/open-edge-platform/edge-ai-libraries/refs/heads/main/libraries/dl-streamer/samples/gstreamer/model_proc/public/classification-optimized.json" "${modeldir}/mobilenet-v2/mobilenet-v2.json"
+download_raw "https://raw.githubusercontent.com/open-edge-platform/dlstreamer/refs/heads/main/samples/gstreamer/model_proc/public/classification-optimized.json" "${modeldir}/resnet-50/resnet-50.json"
+download_raw "https://raw.githubusercontent.com/open-edge-platform/dlstreamer/refs/heads/main/samples/gstreamer/model_proc/public/classification-optimized.json" "${modeldir}/mobilenet-v2/mobilenet-v2.json"
 
 echo ""
 echo "[ Info ] Creating pipeline directory structure..."
