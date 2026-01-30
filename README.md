@@ -185,6 +185,13 @@ To learn more, check out the following resources:
 
 Before submitting a new report, check the existing issues to see if a similar one has been filed.
 
-## Notices
+## License Notice
 
-The **Edge Workload and Benchmarks** project is licensed under the [APACHE 2.0](./LICENSE) license.
+The **Edge Workload and Benchmarks** project is primarily licensed under the [APACHE 2.0](./LICENSE) license.
+However, certain components are derived from code covered by the **GNU Affero General Public License v3.0 (AGPL-3.0)**.
+ 
+- **Apache 2.0** applies to all original work in this repository unless otherwise noted.
+- **AGPL-3.0** applies to the following directories/components:
+  - `model-conversion\scripts\coco.yaml`
+
+These components include a copy of the AGPL license in their respective folders.
