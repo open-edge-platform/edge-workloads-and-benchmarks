@@ -8,7 +8,7 @@ pillow
 psutil
 requests
 scipy
-ultralytics==8.3.59
+ultralytics==8.4.7
 torch
 torchvision
 kagglehub
