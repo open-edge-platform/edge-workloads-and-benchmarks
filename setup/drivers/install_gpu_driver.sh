@@ -13,8 +13,8 @@ GREEN='\033[0;32m'
 NC='\033[0m'
 
 # Configuration
-GPU_DRIVER_VERSION="25.27.34303.5"
-IGC_VERSION="2.14.1"
+GPU_DRIVER_VERSION="26.01.36711.4"
+IGC_VERSION="2.27.10"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
 DRIVER_DIR="${SCRIPT_DIR}/gpu/${GPU_DRIVER_VERSION}"
 
@@ -40,13 +40,13 @@ echo "[ Info ] Downloading GPU driver packages..."
 
 # Package list
 declare -a packages=(
-    "https://github.com/intel/intel-graphics-compiler/releases/download/v${IGC_VERSION}/intel-igc-core-2_${IGC_VERSION}+19448_amd64.deb"
-    "https://github.com/intel/intel-graphics-compiler/releases/download/v${IGC_VERSION}/intel-igc-opencl-2_${IGC_VERSION}+19448_amd64.deb"
+    "https://github.com/intel/intel-graphics-compiler/releases/download/v${IGC_VERSION}/intel-igc-core-2_${IGC_VERSION}+20617_amd64.deb"
+    "https://github.com/intel/intel-graphics-compiler/releases/download/v${IGC_VERSION}/intel-igc-opencl-2_${IGC_VERSION}+20617_amd64.deb"
     "https://github.com/intel/compute-runtime/releases/download/${GPU_DRIVER_VERSION}/intel-ocloc-dbgsym_${GPU_DRIVER_VERSION}-0_amd64.ddeb"
     "https://github.com/intel/compute-runtime/releases/download/${GPU_DRIVER_VERSION}/intel-ocloc_${GPU_DRIVER_VERSION}-0_amd64.deb"
     "https://github.com/intel/compute-runtime/releases/download/${GPU_DRIVER_VERSION}/intel-opencl-icd-dbgsym_${GPU_DRIVER_VERSION}-0_amd64.ddeb"
     "https://github.com/intel/compute-runtime/releases/download/${GPU_DRIVER_VERSION}/intel-opencl-icd_${GPU_DRIVER_VERSION}-0_amd64.deb"
-    "https://github.com/intel/compute-runtime/releases/download/${GPU_DRIVER_VERSION}/libigdgmm12_22.7.2_amd64.deb"
+    "https://github.com/intel/compute-runtime/releases/download/${GPU_DRIVER_VERSION}/libigdgmm12_22.9.0_amd64.deb"
     "https://github.com/intel/compute-runtime/releases/download/${GPU_DRIVER_VERSION}/libze-intel-gpu1-dbgsym_${GPU_DRIVER_VERSION}-0_amd64.ddeb"
     "https://github.com/intel/compute-runtime/releases/download/${GPU_DRIVER_VERSION}/libze-intel-gpu1_${GPU_DRIVER_VERSION}-0_amd64.deb"
 )
@@ -64,7 +64,7 @@ done
 echo ""
 echo "[ Info ] Installing OpenCL ICD loader..."
 sudo apt-get update -qq
-sudo apt --fix-broken install -y -qq
+sudo apt --fix-broken install -y --allow-downgrades -qq
 sudo apt-get install -y -qq ocl-icd-libopencl1
 
 echo ""

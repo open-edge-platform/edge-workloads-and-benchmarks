@@ -14,8 +14,8 @@ GREEN='\033[0;32m'
 NC='\033[0m'
 
 # Configuration
-NPU_DRIVER_VERSION="v1.23.0"
-LEVEL_ZERO_VERSION="1.22.4"
+NPU_DRIVER_VERSION="v1.28.0"
+LEVEL_ZERO_VERSION="1.24.2"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
 DRIVER_DIR="${SCRIPT_DIR}/npu/${NPU_DRIVER_VERSION}"
 
@@ -31,7 +31,7 @@ case "$UBUNTU_VERSION" in
         ;;
     *)
         echo -e "${RED}[ Error ]${NC} Unsupported Ubuntu version: $UBUNTU_VERSION"
-        echo "NPU drivers require Ubuntu 22.04 or 24.04"
+        echo "NPU drivers require Ubuntu 24.04"
         exit 1
         ;;
 esac
@@ -70,12 +70,9 @@ cd "$DRIVER_DIR"
 echo ""
 echo "[ Info ] Downloading NPU driver packages..."
 
-if [ "$UBUNTU_VERSION" == "22.04" ]; then
-    LEVEL_ZERO_PKG="level-zero_${LEVEL_ZERO_VERSION}+u22.04_amd64.deb"
-    NPU_DRIVER_PKG="linux-npu-driver-v1.23.0.20250827-17270089246-ubuntu2204.tar.gz"
-elif [ "$UBUNTU_VERSION" == "24.04" ]; then
+if [ "$UBUNTU_VERSION" == "24.04" ]; then
     LEVEL_ZERO_PKG="level-zero_${LEVEL_ZERO_VERSION}+u24.04_amd64.deb"
-    NPU_DRIVER_PKG="linux-npu-driver-v1.23.0.20250827-17270089246-ubuntu2404.tar.gz"
+    NPU_DRIVER_PKG="linux-npu-driver-v1.28.0.20251218-20347000698-ubuntu2404.tar.gz"
 fi
 
 # Download Level Zero if not present
@@ -100,7 +97,7 @@ fi
 echo ""
 echo "[ Info ] Installing dependencies..."
 sudo apt-get update -qq
-sudo apt --fix-broken install -y -qq
+sudo apt --fix-broken install -y --allow-downgrades -qq
 sudo apt-get install -y -qq libtbb12
 
 echo ""

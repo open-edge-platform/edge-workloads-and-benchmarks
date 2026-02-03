@@ -227,7 +227,7 @@ install_npu_driver
 
 echo ""
 echo "[ Info ] Installing essential packages..."
-$SUDO_PREFIX apt --fix-broken install -y -qq
+$SUDO_PREFIX apt --fix-broken install -y --allow-downgrades -qq
 install_packages \
     apt-transport-https \
     ca-certificates \
