@@ -27,5 +27,5 @@ Downloads and prepares video files for Edge Workloads and Benchmarks pipelines.
 
 ## Requirements
 
-- Docker software with Deep Learning Streamer (DL Streamer) container (`intel/dlstreamer:latest`).
+- Docker software with Deep Learning Streamer (DL Streamer) container (`intel/dlstreamer:weekly-2026.0-20260127-ubuntu24`).
 - GPU with VA-API support (integrated or discrete GPU).

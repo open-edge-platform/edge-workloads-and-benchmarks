@@ -47,7 +47,7 @@ fi
 DLStreamer_Version="N/A"
 if command -v docker >/dev/null 2>&1; then
     if docker images | grep -q "intel/dlstreamer"; then
-        DLStreamer_Version=$(docker run --rm --init intel/dlstreamer:latest apt list 2>/dev/null | grep -E "dlstreamer|gstreamer" | head -n1 | awk '{print $2}' || echo "latest")
+        DLStreamer_Version=$(docker run --rm --init intel/dlstreamer:weekly-2026.0-20260127-ubuntu24 apt list 2>/dev/null | grep -E "dlstreamer|gstreamer" | head -n1 | awk '{print $2}' || echo "latest")
     fi
 fi
 
@@ -55,7 +55,7 @@ fi
 OpenVINO_Version="N/A"
 if command -v docker >/dev/null 2>&1; then
     if docker images | grep -q "intel/dlstreamer"; then
-        OpenVINO_Version=$(docker run --rm --init intel/dlstreamer:latest apt list 2>/dev/null | grep openvino | head -n1 | awk '{print $2}' || echo "N/A")
+        OpenVINO_Version=$(docker run --rm --init intel/dlstreamer:weekly-2026.0-20260127-ubuntu24 apt list 2>/dev/null | grep openvino | head -n1 | awk '{print $2}' || echo "N/A")
     fi
 fi
 

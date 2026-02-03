@@ -168,7 +168,7 @@ cleanup() {
 }
 trap cleanup INT TERM EXIT
 
-DockerCommand+=( intel/dlstreamer:latest )
+DockerCommand+=( intel/dlstreamer:weekly-2026.0-20260127-ubuntu24 )
 Command="gst-launch-1.0 ${Launch}"
 echo "[ Info ] Pipeline Command: ${Command}"
 

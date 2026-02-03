@@ -57,7 +57,7 @@ else
     exit 1
 fi
 
-docker_args+=(intel/dlstreamer:latest)
+docker_args+=(intel/dlstreamer:weekly-2026.0-20260127-ubuntu24)
 
 transcode_to_h265() {
     local in="$1" out="$2"
