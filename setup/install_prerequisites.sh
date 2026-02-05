@@ -21,7 +21,8 @@ NC='\033[0m'
 # Configuration
 REINSTALL_GPU_DRIVER='no'
 REINSTALL_NPU_DRIVER='no'
-
+#
+IS_EMT=false
 # Show help message
 show_help() {
     cat <<EOF
@@ -85,16 +86,32 @@ if [[ $EUID -eq 0 ]] && [[ "${SUDO_PREFIX}" != "" ]]; then
 fi
 
 # Detect Ubuntu version
-ubuntu_version=$(lsb_release -rs)
-case "$ubuntu_version" in
-    24.04|22.04)
-        echo "[ Info ] Ubuntu $ubuntu_version detected"
-        ;;
-    *)
-        echo -e "${RED}[ Error ]${NC} Unsupported Ubuntu version: $ubuntu_version"
+if command -v lsb_release &> /dev/null; then
+    ubuntu_version=$(lsb_release -rs)
+    case "$ubuntu_version" in
+        24.04|22.04)
+            echo "[ Info ] Ubuntu $ubuntu_version detected"
+            ;;
+        *)
+            echo -e "${RED}[ Error ]${NC} Unsupported Ubuntu version: $ubuntu_version"
+            exit 1
+            ;;
+    esac
+else
+    if [ -f /etc/os-release ]; then
+        os_name=$(grep -i '^NAME=' /etc/os-release | head -n 1 | cut -d= -f2- | tr -d '"')
+        if echo "$os_name" | grep -qi "Edge Microvisor Toolkit"; then
+            IS_EMT=true
+            echo "[ Info ] Edge Microvisor Toolkit detected"
+        else
+            echo -e "${RED}[ Error ]${NC} Unsupported OS: $os_name"
+            exit 1
+        fi
+    else
+        echo -e "${RED}[ Error ]${NC} Unable to detect OS (missing lsb_release and /etc/os-release)"
         exit 1
-        ;;
-esac
+    fi
+fi
 
 # Get CPU information
 cpu_model_name=$(lscpu | grep "Model name:" | awk -F: '{print $2}' | xargs)
@@ -102,7 +119,11 @@ echo "[ Info ] CPU: $cpu_model_name"
 echo ""
 
 update_package_lists() {
-    timeout --foreground $APT_UPDATE_TIMEOUT $SUDO_PREFIX apt-get update 2>&1
+    if [ "$IS_EMT" = true ]; then
+        timeout --foreground $APT_UPDATE_TIMEOUT $SUDO_PREFIX tdnf makecache 2>&1
+    else
+        timeout --foreground $APT_UPDATE_TIMEOUT $SUDO_PREFIX apt-get update 2>&1
+    fi
     local update_exit_code=$?
 
     if [ $update_exit_code -eq 124 ]; then
@@ -118,7 +139,11 @@ install_packages() {
     local log_file
     log_file=$(mktemp)
 
-    timeout --foreground $APT_GET_TIMEOUT $SUDO_PREFIX apt-get install -y --allow-downgrades "$@" 2>&1 | tee "$log_file"
+    if [ "$IS_EMT" = true ]; then
+        timeout --foreground $APT_GET_TIMEOUT $SUDO_PREFIX tdnf install -y "$@" 2>&1 | tee "$log_file"
+    else
+        timeout --foreground $APT_GET_TIMEOUT $SUDO_PREFIX apt-get install -y --allow-downgrades "$@" 2>&1 | tee "$log_file"
+    fi
     local status=${PIPESTATUS[0]}
 
     if [[ $status -eq 124 ]]; then
@@ -156,6 +181,23 @@ add_user_to_group() {
 
 # Docker install function
 install_docker() {
+    if [ "$IS_EMT" = true ]; then
+        if command -v docker &> /dev/null; then
+            echo "[ Info ] Docker preinstalled on Edge Microvisor Toolkit"
+            if command -v systemctl &> /dev/null; then
+                $SUDO_PREFIX systemctl enable docker
+                $SUDO_PREFIX systemctl start docker
+            else
+                echo -e "${RED}[ Error ]${NC} systemctl not available to start Docker service"
+                exit 1
+            fi
+            return 0
+        else
+            echo -e "${RED}[ Error ]${NC} Docker not found on Edge Microvisor Toolkit"
+            exit 1
+        fi
+    fi
+
     if command -v docker &> /dev/null; then
         local docker_version
 	docker_version=$(docker --version 2>/dev/null | awk '{print $3}' | tr -d ',')
@@ -190,6 +232,11 @@ install_docker() {
 
 # GPU compute driver installation (optional)
 install_gpu_driver() {
+    if [ "$IS_EMT" = true ]; then
+        echo "[ Info ] Skipping GPU driver install on Edge Microvisor Toolkit"
+        return 0
+    fi
+
     if [ "$REINSTALL_GPU_DRIVER" = "yes" ]; then
         echo ""
         echo -e "${GREEN}[ GPU Driver Installation ]${NC}"
@@ -203,6 +250,11 @@ install_gpu_driver() {
 
 # NPU compute driver installation (optional)
 install_npu_driver() {
+    if [ "$IS_EMT" = true ]; then
+        echo "[ Info ] Skipping NPU driver install on Edge Microvisor Toolkit"
+        return 0
+    fi
+
     if [ "$REINSTALL_NPU_DRIVER" = "yes" ]; then
         echo ""
         echo -e "${GREEN}[ NPU Driver Installation ]${NC}"
@@ -227,26 +279,41 @@ install_npu_driver
 
 echo ""
 echo "[ Info ] Installing essential packages..."
-$SUDO_PREFIX apt --fix-broken install -y -qq
-install_packages \
-    apt-transport-https \
-    ca-certificates \
-    curl \
-    gnupg \
-    lsb-release \
-    software-properties-common \
-    build-essential \
-    cmake \
-    git \
-    wget \
-    python3-dev \
-    python3-pip \
-    python3-venv \
-    ffmpeg \
-    cpuid\
-    vainfo \
-    clinfo \
-    intel-gpu-tools
+if [ "$IS_EMT" = true ]; then
+    install_packages \
+        ca-certificates \
+        curl \
+        gnupg \
+        build-essential \
+        cmake \
+        git \
+        wget \
+        python3-pip \
+        cpuid \
+        mesa-libGL \
+        intel-gpu-tools
+else
+    $SUDO_PREFIX apt --fix-broken install -y -qq
+    install_packages \
+        apt-transport-https \
+        ca-certificates \
+        curl \
+        gnupg \
+        lsb-release \
+        software-properties-common \
+        build-essential \
+        cmake \
+        git \
+        wget \
+        python3-dev \
+        python3-pip \
+        python3-venv \
+        ffmpeg \
+        cpuid\
+        vainfo \
+        clinfo \
+        intel-gpu-tools
+fi
 
 echo ""
 install_docker
@@ -264,6 +331,52 @@ if [ -d /dev/dri ]; then
         need_to_logout=1
     fi
 fi
+build_container() {
+    echo ""
+    echo -e "${GREEN}[ Info ]${NC} Building custom dlstreamer container for EMT"
+
+    local http_proxy_value="${http_proxy:-${HTTP_PROXY:-}}"
+    local https_proxy_value="${https_proxy:-${HTTPS_PROXY:-}}"
+    local no_proxy_value="${no_proxy:-${NO_PROXY:-}}"
+
+    if [ -z "$http_proxy_value" ]; then
+        echo -e "${RED}[ Error ]${NC} http_proxy/HTTP_PROXY not set"
+        exit 1
+    fi
+
+    if [ -z "$https_proxy_value" ]; then
+        echo -e "${RED}[ Error ]${NC} https_proxy/HTTPS_PROXY not set"
+        exit 1
+    fi
+
+    if [ -z "$no_proxy_value" ]; then
+        echo -e "${RED}[ Error ]${NC} no_proxy/NO_PROXY not set"
+        exit 1
+    fi
+
+    $SUDO_PREFIX docker build \
+        --build-arg YOUR_HTTP_PROXY="$http_proxy_value" \
+        --build-arg YOUR_HTTPS_PROXY="$https_proxy_value" \
+        --build-arg YOUR_NO_PROXY="$no_proxy_value" \
+        --no-cache \
+        -t intel/dlstreamer:custom .
+
+    if [ $? -ne 0 ]; then
+        echo -e "${RED}[ Error ]${NC} Container image build failed"
+        exit 1
+    fi
+}
+
+if [ "$IS_EMT" = true ]; then
+    echo ""
+    echo -e "${GREEN}==================================================${NC}"
+    echo -e "${GREEN}  Docker Container Build${NC}"
+    echo -e "${GREEN}==================================================${NC}"
+    echo ""
+    build_container
+fi
+
+
 
 echo ""
 echo -e "${GREEN}==================================================${NC}"

@@ -10,6 +10,19 @@ basedir="$(realpath "$(dirname -- "$0")")"
 . "${basedir}/utils/helper_functions.sh"
 Timestamp="$(date "+%Y%m%d-%H%M%S")"
 
+IS_EMT=false
+if [ -f /etc/os-release ]; then
+    os_name=$(grep -i '^NAME=' /etc/os-release | head -n 1 | cut -d= -f2- | tr -d '"')
+    if echo "$os_name" | grep -qi "Edge Microvisor Toolkit"; then
+        IS_EMT=true
+    fi
+fi
+
+if [ "$IS_EMT" = true ]; then
+    echo "[ Info ] Skipping display pipeline on Edge Microvisor Toolkit (no desktop environment)"
+    exit 0
+fi
+
 # Initialize parameters
 PipelineConfig="none"
 

@@ -10,6 +10,20 @@ basedir="$(realpath "$(dirname -- "$0")")"
 Timestamp="$(date "+%Y%m%d-%H%M%S")"
 System="$(lscpu | grep "Model name" | grep -v "BIOS" | sed -n 's/^Model name://p' | sed 's/.*Intel/Intel/g')"
 
+IS_EMT=false
+if [ -f /etc/os-release ]; then
+    os_name=$(grep -i '^NAME=' /etc/os-release | head -n 1 | cut -d= -f2- | tr -d '"')
+    if echo "$os_name" | grep -qi "Edge Microvisor Toolkit"; then
+        IS_EMT=true
+    fi
+fi
+
+if [ "$IS_EMT" = true ]; then
+    DOCKER_IMAGE="intel/dlstreamer:custom"
+else
+    DOCKER_IMAGE="intel/dlstreamer:latest"
+fi
+
 # Target per-stream fps and margin of error
 # Example: 0.95 == 95% of target. 30 * 0.95 = 28.5 fps
 # Example: 1.00 == 100% of target. 30 * 1.00 = 30.0 fps
@@ -310,7 +324,7 @@ if [[ ${#Commands[@]} -gt 1 ]]; then
         echo "[ Info ] Container: ${ContainerName}"
         echo ""
         echo "[ Info ] Pipeline Template: ${PipelineTemplates[$i]}"
-        ThisDockerCommand=("${DockerCommand[@]}" --name "${ContainerName}" intel/dlstreamer:latest)
+    ThisDockerCommand=("${DockerCommand[@]}" --name "${ContainerName}" "${DOCKER_IMAGE}")
         
         # Run the pipelines
 	# shellcheck disable=SC2086
@@ -325,7 +339,7 @@ else
     echo "[ Info ] Container: ${ContainerName}"
     echo ""
     echo "[ Info ] Pipeline Template: ${PipelineTemplates[0]}"
-    ThisDockerCommand=("${DockerCommand[@]}" --name "${ContainerName}" intel/dlstreamer:latest)
+    ThisDockerCommand=("${DockerCommand[@]}" --name "${ContainerName}" "${DOCKER_IMAGE}")
     
     # Run the pipelines
     # shellcheck disable=SC2086
