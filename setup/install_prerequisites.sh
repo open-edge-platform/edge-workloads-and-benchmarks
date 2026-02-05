@@ -289,7 +289,8 @@ if [ "$IS_EMT" = true ]; then
         git \
         wget \
         python3-pip \
-        cpuid\
+        cpuid \
+        mesa-libGL \
         intel-gpu-tools
 else
     $SUDO_PREFIX apt --fix-broken install -y -qq
@@ -353,7 +354,7 @@ build_container() {
         exit 1
     fi
 
-    docker build \
+    $SUDO_PREFIX docker build \
         --build-arg YOUR_HTTP_PROXY="$http_proxy_value" \
         --build-arg YOUR_HTTPS_PROXY="$https_proxy_value" \
         --build-arg YOUR_NO_PROXY="$no_proxy_value" \
@@ -367,7 +368,7 @@ build_container() {
 }
 
 if [ "$IS_EMT" = true ]; then
-    cho ""
+    echo ""
     echo -e "${GREEN}==================================================${NC}"
     echo -e "${GREEN}  Docker Container Build${NC}"
     echo -e "${GREEN}==================================================${NC}"
