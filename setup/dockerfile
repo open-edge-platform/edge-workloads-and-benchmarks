@@ -1,0 +1,61 @@
+FROM intel/dlstreamer:latest
+
+USER root
+
+# Proxy configuration
+ARG YOUR_HTTP_PROXY
+ARG YOUR_HTTPS_PROXY
+ARG YOUR_NO_PROXY
+
+# Set proxy environment variables
+ENV http_proxy=${YOUR_HTTP_PROXY}
+ENV https_proxy=${YOUR_HTTPS_PROXY}
+ENV HTTP_PROXY=${YOUR_HTTP_PROXY}
+ENV HTTPS_PROXY=${YOUR_HTTPS_PROXY}
+ENV no_proxy=${YOUR_NO_PROXY}
+ENV NO_PROXY=${YOUR_NO_PROXY}
+
+# Change the default shell to bash
+SHELL ["/bin/bash", "-c"]
+
+# Avoid interactive prompts during package installation
+ENV DEBIAN_FRONTEND=noninteractive
+
+
+# Update and install common tools
+RUN apt-get update && \
+    apt-get install -y \
+        sudo \
+        curl \
+        vim \
+        wget \
+        gnupg \
+        ca-certificates \
+        libtbb12 \
+        gcc \
+        g++ \
+        make \
+        automake \
+        cmake \
+        autoconf \
+        lsb-release \
+        pciutils \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy driver installation scripts
+COPY drivers/install_gpu_driver.sh /tmp/install_gpu_driver.sh
+COPY drivers/install_npu_driver.sh /tmp/install_npu_driver.sh
+
+# Make scripts executable
+RUN chmod +x /tmp/install_gpu_driver.sh /tmp/install_npu_driver.sh
+
+# Install GPU driver
+RUN echo "[ Info ] Installing GPU driver..." && \
+    /tmp/install_gpu_driver.sh || echo "[ Warning ] GPU driver installation failed or not applicable"
+
+# Install NPU driver
+RUN echo "[ Info ] Installing NPU driver..." && \
+    /tmp/install_npu_driver.sh || echo "[ Warning ] NPU driver installation failed or not applicable"
+
+# Clean up installation scripts
+RUN rm -f /tmp/install_gpu_driver.sh /tmp/install_npu_driver.sh
