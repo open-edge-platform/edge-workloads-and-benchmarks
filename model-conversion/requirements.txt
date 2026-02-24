@@ -1,5 +1,5 @@
-openvino
-nncf
+openvino==2025.4.1
+nncf==2.19.0
 numpy
 matplotlib
 polars
@@ -9,7 +9,5 @@ psutil
 requests
 scipy
 ultralytics==8.3.59
-torch
-torchvision
 kagglehub
 opencv-python

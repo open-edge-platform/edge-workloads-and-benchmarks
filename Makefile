@@ -21,6 +21,7 @@ CORES ?=
 
 # HTML generation and serving variables
 PORT ?= 8000
+HOSTIP ?=127.0.0.1
 
 GPU_FLAG := $(if $(filter True true TRUE yes YES,$(INCLUDE_GPU)),--reinstall-gpu-driver=yes,)
 NPU_FLAG := $(if $(filter True true TRUE yes YES,$(INCLUDE_NPU)),--reinstall-npu-driver=yes,)
@@ -41,7 +42,7 @@ help:
 	@echo ""
 	@echo "# Generate results"
 	@echo "make html-report      - Generate HTML dashboard from benchmark results. Requires serve-report to view locally."
-	@echo "make serve-report     - Host HTML dashboard locally (default: PORT=8000)"
+	@echo "make serve-report     - Host HTML dashboard locally (default: PORT=8000 HOSTIP=localhost)"
 	@echo ""
 	@echo "#Optional: display pipeline demo (requires display access permissions)"
 	@echo "make display          - Visualized pipeline demo (CONFIG={light,medium,heavy} DETECT={CPU,GPU,NPU} CLASSIFY={CPU,GPU,NPU} DURATION={seconds} CORES={core-type})"
@@ -150,9 +151,9 @@ serve-report:
 		exit 1; \
 	fi
 	@echo "[ Info ] Starting HTTP server for HTML dashboard"
-	@echo "[ Info ] Dashboard available at: http://localhost:$(PORT)"
+	@echo "[ Info ] Dashboard available at: http://$(HOSTIP):$(PORT)"
 	@echo "[ Info ] Press Ctrl+C to stop the server"
-	@cd html && python3 -m http.server $(PORT) --bind 127.0.0.1
+	@cd html && python3 -m http.server $(PORT) --bind $(HOSTIP)
 
 .PHONY: clean
 clean:
