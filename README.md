@@ -72,7 +72,7 @@ sudo make benchmarks  # Recommended: Adds power and efficiency metrics to report
 
 # Generate results
 make html-report      # Generate HTML dashboard from benchmark results. Requires serve-report to view locally.
-make serve-report     # Host dashboard locally (params: PORT, default host: http://localhost:8000)
+make serve-report     # Host dashboard locally (params: PORT, HOSTIP, default host: http://localhost:8000)
 
 # Optional: display pipeline demo (requires display access permissions)
 make display          # Visualized pipeline demo (params: CONFIG={light,medium,heavy} DETECT={CPU,GPU,NPU} CLASSIFY={CPU,GPU,NPU} DURATION={seconds})
@@ -98,6 +98,7 @@ make clean-all        # Remove all generated collateral (models, media, results,
 - `DETECT/CLASSIFY=CPU|GPU|NPU` - Inference device assignment
 - `CORES=pcore|ecore|lpecore` - CPU core pinning based on core type
 - `PORT` - HTTP server port for dashboard (default: 8000)
+- `HOSTIP` - HTTP server IP binding for dashboard (default: localhost)
 
 ### Manual Setup (Alternative)
 

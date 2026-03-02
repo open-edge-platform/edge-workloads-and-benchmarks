@@ -39,7 +39,7 @@ else
 fi
 
 # /dev/dri (GPU / VA)
-docker_args=(docker run --rm --init -v "${mediadir}:/home/dlstreamer/media")
+docker_args=(docker run --rm --init --user "$(id -u):$(id -g)" -v "${mediadir}:/mnt/media")
 if [[ -d /dev/dri ]]; then
     docker_args+=( --device /dev/dri )
     declare -A _seen_gid_dri=()
@@ -62,14 +62,14 @@ docker_args+=(intel/dlstreamer:latest)
 transcode_to_h265() {
     local in="$1" out="$2"
     "${docker_args[@]}" gst-launch-1.0 \
-        filesrc location="/home/dlstreamer/media/mp4/${in}" ! \
+        filesrc location="/mnt/media/mp4/${in}" ! \
 	decodebin3 ! \
 	videorate ! "video/x-raw,framerate=30/1" ! \
 	vapostproc ! \
 	capsfilter caps="video/x-raw(memory:VAMemory),pixel-aspect-ratio=1/1,width=1920,height=1080,framerate=30/1" ! \
 	vah265enc bitrate=2000 b-frames=0 key-int-max=60 ! \
 	h265parse ! \
-	filesink location="/home/dlstreamer/media/hevc/${out}"
+	filesink location="/mnt/media/hevc/${out}"
 }
 
 # Convert apple and bear videos into H265 1080p30 2Mbps video files with no B-frames
