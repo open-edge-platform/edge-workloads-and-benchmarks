@@ -17,7 +17,7 @@ download_pexels() {
     (( $# == 2 )) || { echo "[ Error ] download_pexels <url> <out>"; exit 1; }
     local url="$1" out="$2"
     rm -f "${out}.part"
-    wget -q --show-progress --tries=5 --timeout=30 -L \
+    wget -q  --tries=5 --timeout=30 \
         -O "${out}.part" "${url}"
     mv -f "${out}.part" "${out}"
 }

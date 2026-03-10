@@ -78,7 +78,7 @@ download_raw() {
     mkdir -p "$(dirname -- "${out}")"
     echo "[ Download ] ${url} -> ${out}"
     rm -f "${out}.part"
-    wget -q --show-progress --tries=5 --timeout=30 -L -O "${out}.part" "${url}"
+    wget -q --tries=5 --timeout=30 -O "${out}.part" "${url}"
     mv -f "${out}.part" "${out}"
 }
 
