@@ -150,7 +150,7 @@ else
 fi
 [[ -f "${ModelAbs}" ]] || { echo "[ Error ] Model not found: ${ModelAbs}"; exit 1; }
 
-# Ensure venv exists — create automatically if missing
+# Ensure venv exists
 if [[ ! -d "${basedir}/venv" ]]; then
     echo "[ Info ] Virtual environment not found. Setting up..."
     bash "${basedir}/vision-utils/setup_env.sh"

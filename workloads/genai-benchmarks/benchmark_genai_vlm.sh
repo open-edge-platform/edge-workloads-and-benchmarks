@@ -123,7 +123,7 @@ fi
 ModelDir="${basedir}/../../collateral/models/genai/${ModelName}/${Precision}"
 [[ -d "${ModelDir}" ]] || { echo "[ Error ] Model directory not found: ${ModelDir}"; exit 1; }
 
-# Auto-setup environment if missing
+# Ensure venv exists
 if [[ ! -d "${basedir}/venv" ]] || [[ ! -d "${basedir}/genai-utils/openvino.genai/tools/llm_bench" ]]; then
     echo "[ Info ] GenAI runtime environment not found. Setting up..."
     bash "${basedir}/genai-utils/setup_genai.sh"

@@ -10,7 +10,10 @@ basedir="$(realpath "$(dirname -- "$0")")"
 Timestamp="$(date "+%Y%m%d-%H%M%S")"
 System="$(lscpu | grep "Model name" | grep -v "BIOS" | sed -n 's/^Model name://p' | sed 's/.*Intel/Intel/g')"
 
-# Target per-stream fps for theoretical stream density
+# Target per-stream fps and margin of error
+# Example: 0.95 == 95% of target. 30 * 0.95 = 28.5 fps
+# Example: 1.00 == 100% of target. 30 * 1.00 = 30.0 fps
+
 TARGET_FPS_1080P=30
 TARGET_FPS_4K=30
 
@@ -95,7 +98,7 @@ else
     echo "[ Error ] Cannot determine resolution from filename: ${MediaFile}"; exit 1
 fi
 
-# Resolve media path (accept absolute path, relative path, or bare filename)
+# Resolve media path
 if [[ "${MediaFile}" == /* ]]; then
     MediaAbs="${MediaFile}"
     MediaFile="$(basename "${MediaFile}")"
@@ -117,7 +120,6 @@ fi
 [[ -f "${MediaAbs}" ]] || { echo "[ Error ] Media file not found: ${MediaAbs}"; exit 1; }
 MediaAbs="$(realpath "${MediaAbs}")"
 
-# Derive a short name for the media (e.g. bears_1080, apple_4k)
 MediaName="$(basename "${MediaFile}" ".${Codec}")"
 
 # Resolve core pinning
@@ -209,7 +211,7 @@ echo ""
 echo "[ Info ] Pipeline: ${Pipeline}"
 echo ""
 
-ThisDockerCommand=("${DockerCommand[@]}" --name "${ContainerName}" intel/dlstreamer:2026.0.0-ubuntu24)
+ThisDockerCommand=("${DockerCommand[@]}" --name "${ContainerName}" intel/dlstreamer:2026.1.0-20260414-weekly-ubuntu24)
 
 sleep 1
 # shellcheck disable=SC2086,SC2090

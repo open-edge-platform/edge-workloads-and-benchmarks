@@ -36,7 +36,7 @@ detect_devices() {
     fi
 }
 
-# All models to sweep (relative to collateral/models/)
+# Target models for workload sweep
 MODELS=(
     "detection/yolov11n_640x640/INT8/yolo11n.xml"
     "detection/yolov5m_640x640/INT8/yolov5m-640_INT8.xml"
