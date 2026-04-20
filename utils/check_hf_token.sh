@@ -4,27 +4,22 @@
 # SPDX-License-Identifier: Apache-2.0
 
 # ==============================================================================
-# Hugging Face Token Check
-# Interactive gate for GenAI model downloads that require gated repo access.
-# If a token is already available (env or cached), exits silently.
-# Otherwise prompts the user and prints the token to stdout on success.
-#
-# Usage (from Makefile):
-#   HF_TOKEN=$$(bash utils/check_hf_token.sh) && export HF_TOKEN
+# Prompts user to input their Hugging Face token and checks for gated access to required models
+# Uses HF_TOKEN environment variable if already set. Prints token to terminal
 # ==============================================================================
 
 set -e
 
 HF_TOKEN_FILE="${HOME}/.cache/huggingface/token"
 
-# Colors (suppressed when stderr is not a terminal, since prompts go to stderr)
+# Colors
 if [ -t 2 ]; then
     RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[0;33m'; CYAN='\033[0;36m'; NC='\033[0m'
 else
     RED=''; GREEN=''; YELLOW=''; CYAN=''; NC=''
 fi
 
-# Already have a token — nothing to do
+# Checks if token already exists
 if [[ -n "${HF_TOKEN:-}" ]]; then
     echo "${HF_TOKEN}"
     exit 0
@@ -35,7 +30,7 @@ if [[ -f "${HF_TOKEN_FILE}" ]]; then
     exit 0
 fi
 
-# Interactive prompts (all go to stderr so stdout stays clean for the token)
+# Interactive prompts checking if the user has a token and is authenticated
 exec 3>&1  # save stdout
 exec 1>&2  # redirect stdout to stderr for prompts
 
@@ -85,5 +80,5 @@ fi
 echo -e "${CYAN}[ Info ]${NC} Token set for this session."
 echo ""
 
-# Print token to the original stdout (fd 3) for capture
+# Print token to terminal
 echo "${hf_token_input}" >&3

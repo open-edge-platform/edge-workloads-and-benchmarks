@@ -4,9 +4,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 # ==============================================================================
-# Benchmark Results Inventory
-# Shows CSV/log counts per workload and report freshness.
-# Usage: show_status.sh
+# Shows CSV/log counts per workload and report completion count
 # ==============================================================================
 
 set -e
@@ -50,5 +48,5 @@ echo "================================================"
 echo -e "  Total: ${_B}${total}${_N} CSV result files"
 echo ""
 
-# Report freshness check
+# Report number of completed reports detected
 bash "${REPO_ROOT}/tools/html/check_report_status.sh"

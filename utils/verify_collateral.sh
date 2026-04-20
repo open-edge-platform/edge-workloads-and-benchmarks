@@ -4,9 +4,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 # ==============================================================================
-# Collateral Verification
 # Checks that all required models, media files, and GenAI assets are present.
-# Usage: verify_collateral.sh [--section vision|media|genai] [--verbose]
 # ==============================================================================
 
 set -e
@@ -14,7 +12,7 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname -- "$0")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
-# Color support (disabled when piped)
+# Color
 if [ -t 1 ]; then
     _G="\033[0;32m"; _Y="\033[0;33m"; _R="\033[0;31m"; _N="\033[0m"
 else
@@ -38,9 +36,7 @@ done
 
 ERRORS=0
 
-# ---------------------------------------------------------------------------
-# Vision models
-# ---------------------------------------------------------------------------
+# ── Vision models ──────────────────────────────────────────────────────────────
 verify_vision() {
     local base="${REPO_ROOT}/collateral/models"
     local missing=0 total=0 found=0
@@ -79,9 +75,7 @@ verify_vision() {
     fi
 }
 
-# ---------------------------------------------------------------------------
-# Media files
-# ---------------------------------------------------------------------------
+# ── Media files ──────────────────────────────────────────────────────────────
 verify_media() {
     local base="${REPO_ROOT}/collateral/media"
     local missing=0 total=0 found=0
@@ -115,9 +109,7 @@ verify_media() {
     fi
 }
 
-# ---------------------------------------------------------------------------
-# GenAI models
-# ---------------------------------------------------------------------------
+# ── GenAI models ──────────────────────────────────────────────────────────────
 verify_genai() {
     local base="${REPO_ROOT}/collateral/models/genai"
     local missing=0 total=0 found=0
@@ -155,9 +147,7 @@ verify_genai() {
     fi
 }
 
-# ---------------------------------------------------------------------------
-# Run checks
-# ---------------------------------------------------------------------------
+# ── Run checks ──────────────────────────────────────────────────────────────
 case "${SECTION}" in
     vision) verify_vision ;;
     media)  verify_media ;;

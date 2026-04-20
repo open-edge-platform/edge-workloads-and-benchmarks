@@ -3,12 +3,9 @@
 # SPDX-FileCopyrightText: (C) 2024 - 2025 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 
-# Detect core types with multi-tier redundancy:
-# Confirm Multi-Socket (Xeon, assume all P-Cores across all sockets)
-# Use CPUID to determine Intel Core vs Intel Atom (Guarantee P-Cores)
-# Opportunistically check sysfs for core/atom/lowpower assignments (Guarantee P-Cores)
-# Fallback to L1d cache size drop detection and topology (Guarantee LP-E Cores)
-# Fallback SMT pair detection in topology (Guarantee P-Cores)
+# ==============================================================================
+# Detect core types with multi-tier redundancy (P-core, E-core, LPE-core)
+# ==============================================================================
 
 # set VERBOSE=1 to enable debug output
 debug_print() {
@@ -78,7 +75,7 @@ remove_from_remaining() {
     remaining_core_ids=("${new_remaining[@]}")
 }
 
-# Check if system is multi-socket (Xeon))
+# Check if system is multi-socket (Xeon)
 check_xeon() {
     local socket_count
     socket_count=$(grep "physical id" /proc/cpuinfo 2>/dev/null | sort | uniq | wc -l)

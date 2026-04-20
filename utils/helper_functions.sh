@@ -3,6 +3,7 @@
 # SPDX-FileCopyrightText: (C) 2024 - 2025 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 
+# Parses core pinning input and returns a valid core list or NO_PIN
 parse_core_pinning() {
     local input="$1"
     local script_dir
@@ -78,20 +79,7 @@ fix_sudo_permissions() {
     fi
 }
 
-# ── Power Monitoring ─────────────────────────────────────────────────────────
-# Shared functions for starting, stopping, and collecting power measurements.
-# Usage:
-#   power_init <results_dir> <filename> <duration>   → sets PowerLogFile, PowerDelay, PowerDuration
-#   power_start <duration>                           → launches background monitor, sets PowerPID
-#   power_stop                                       → kills background monitor
-#   power_collect                                    → parses log, prints avg, sets AvgPower
-#
-# GenAI note: GenAI starts power monitoring after warm-up detection, so it calls
-# power_start directly from inside its while-read loop rather than at script top.
-
-# Globals set by these functions (caller should declare them):
-#   PowerPID, PowerLogFile, PowerDelay, PowerDuration, AvgPower
-
+# Power Monitoring
 POWER_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 power_init() {

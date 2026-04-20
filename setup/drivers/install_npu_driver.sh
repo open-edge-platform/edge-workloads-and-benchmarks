@@ -16,8 +16,7 @@ NC='\033[0m'
 NPU_DRIVER_VERSION="v1.32.0"
 NPU_DRIVER_BUILD="20260402-23905121947"
 LEVEL_ZERO_VERSION="1.27.0"
-# Level Zero is sourced from the intel-graphics PPA snapshot for this driver release.
-# Update the snapshot timestamp here when bumping LEVEL_ZERO_VERSION.
+
 LEVEL_ZERO_PKG="libze1_${LEVEL_ZERO_VERSION}-1~24.04~ppa2_amd64.deb"
 LEVEL_ZERO_URL="https://snapshot.ppa.launchpadcontent.net/kobuk-team/intel-graphics/ubuntu/20260324T100000Z/pool/main/l/level-zero-loader/${LEVEL_ZERO_PKG}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
@@ -102,7 +101,6 @@ echo -e "${CYAN}[ Info ]${NC} Installing NPU driver packages..."
 sudo dpkg -i ./*.deb 2>/dev/null || sudo apt-get install -f -y -qq
 
 # Install Level Zero (libze1) from intel-graphics PPA snapshot.
-# This must be installed after the main NPU .deb files.
 echo ""
 echo -e "${CYAN}[ Info ]${NC} Installing Level Zero ${LEVEL_ZERO_VERSION}..."
 if [ -f "$LEVEL_ZERO_PKG" ]; then

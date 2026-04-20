@@ -1,6 +1,5 @@
 # Compute Driver Installation Scripts
-
-Intel has validated the GPU and NPU compute drivers in terms of performance reproducibility, for Edge Workloads and Benchmarks.
+GPU and NPU compute drivers required for device-specific benchmarks.
 
 ## Usage
 
@@ -25,7 +24,7 @@ Intel has validated the GPU and NPU compute drivers in terms of performance repr
 
 
 ## Directory Structure
-
+Downloaded packages are saved locally for offline reinstallation.
 ```
 drivers/
 ├── gpu/
@@ -33,11 +32,3 @@ drivers/
 └── npu/
     └── v1.32.0/                # Downloaded NPU driver packages
 ```
-
-Downloaded packages are saved locally for offline reinstallation.
-
-## Integration with the Main Prerequisite Script
-
-Driver installation is **optional** by default. The main `install_prerequisites.sh` script does not automatically install drivers to maintain system stability.
-
-Use these dedicated scripts or the `install_prerequisites.sh` script with the `--reinstall-gpu-driver=yes` / `--reinstall-npu-driver=yes` flags to install the compute drivers.

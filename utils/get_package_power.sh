@@ -238,7 +238,7 @@ collect_power()
         exit 1
     fi
 
-    # --- Discover sensors for each device (done once) ---
+    # --- Discover sensors for each device ---
     declare -a SENSOR_PATHS SENSOR_TYPES SENSOR_SOURCES
     for idx in "${!DEVICES[@]}"; do
         IFS='|' read -r card_path card_name driver pci_slot <<< "${DEVICES[$idx]}"
@@ -266,7 +266,6 @@ collect_power()
                     sensor_path="${base}_average"; sensor_type="power"; sensor_source="hwmon"; break 2
                 fi
             done
-            # fallback: single power sensor without labels
             if [[ -z "$sensor_path" ]]; then
                 local power_files=("$hwmon_dir"/power*_input "$hwmon_dir"/power*_average)
                 if (( ${#power_files[@]} == 1 )) && [[ -f "${power_files[0]}" ]]; then
