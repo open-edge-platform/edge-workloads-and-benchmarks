@@ -7,13 +7,14 @@ set -e
 
 basedir="$(realpath "$(dirname -- "$0")")"
 
-# Colors (suppressed when stdout is not a terminal)
+# Colors
 if [ -t 1 ]; then
     RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[0;33m'; CYAN='\033[0;36m'; NC='\033[0m'
 else
     RED=''; GREEN=''; YELLOW=''; CYAN=''; NC=''
 fi
 
+# Create virtual environment if it doesn't exist
 if [[ -d "${basedir}/venv" ]]; then
     echo -e "${CYAN}[ Info ]${NC} Virtual environment already exists, skipping creation."
 else
@@ -23,6 +24,7 @@ fi
 
 source "${basedir}/venv/bin/activate"
 
+# Pip install required dependencies
 echo -e "${CYAN}[ Info ]${NC} Installing model export dependencies..."
 pip install -q --upgrade pip
 pip install -q openvino "optimum-intel[openvino]" nncf \

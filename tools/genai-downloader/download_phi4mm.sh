@@ -6,12 +6,8 @@
 # Phi-4-Multimodal-Instruct — Multimodal Vision/Speech/Language Model
 # https://huggingface.co/microsoft/Phi-4-multimodal-instruct
 #
-# 5.6B params (Phi-4-Mini backbone + vision/speech encoders & adapters).
-# MIT license — no gating, no HF token required.
-#
-# This script uses a dedicated venv because the model's custom code
-# (phi4mm architecture) requires specific dependency versions that may
-# conflict with other downloader environments.
+# 5.6B parameters
+# Model License: MIT license — no gating, no HF token required.
 
 set -e
 
@@ -24,14 +20,14 @@ SHORT_NAME="phi-4-multimodal"
 HF_ID="microsoft/Phi-4-multimodal-instruct"
 VENV_DIR="${basedir}/venv-phi4mm"
 
-# Colors (suppressed when stdout is not a terminal)
+# Colors
 if [ -t 1 ]; then
     RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[0;33m'; CYAN='\033[0;36m'; NC='\033[0m'
 else
     RED=''; GREEN=''; YELLOW=''; CYAN=''; NC=''
 fi
 
-# --- Virtual environment setup ---
+# Virtual environment setup
 if [[ -d "${VENV_DIR}" ]]; then
     echo -e "${CYAN}[ Info ]${NC} Using existing Phi-4 multimodal venv at ${VENV_DIR}"
 else
@@ -51,13 +47,13 @@ fi
 
 source "${VENV_DIR}/bin/activate"
 
-# --- Helper functions ---
+# Validation function
 model_exists() {
     local dest="$1"
-    # Multimodal exports produce per-component files instead of a single openvino_model.xml
     [[ -d "${dest}" ]] && [[ -f "${dest}/openvino_language_model.xml" ]]
 }
 
+# Export Phi 4 Multimodal
 export_model() {
     local weight_fmt="$1"
     local out_dir_name="$2"
@@ -96,7 +92,7 @@ export_model() {
     echo -e "${GREEN}[ Pass ]${NC} ${SHORT_NAME}/${out_dir_name} exported successfully."
 }
 
-# --- Export INT8 and INT4 ---
+# Export INT8 and INT4
 echo ""
 echo -e "${GREEN}=== Phi-4 Multimodal ===${NC}"
 echo -e "${CYAN}[ Info ]${NC} Starting Phi-4 Multimodal model export..."

@@ -6,12 +6,9 @@
 # Gemma 3 4B IT — Multimodal Vision-Language Model
 # https://huggingface.co/google/gemma-3-4b-it
 #
-# 4B params, 128K context, image-text-to-text. Gated model — requires
-# accepting Google's Gemma terms at huggingface.co and providing an
-# access token.
-#
-# This script uses the shared downloader venv (which includes
-# transformers >= 4.50.0).
+# 4B parameters
+# Model License: gemma — gated model requires accepting
+# terms at huggingface.co and providing an access token.
 
 set -e
 
@@ -24,14 +21,14 @@ SHORT_NAME="gemma-3-4b-it"
 HF_ID="google/gemma-3-4b-it"
 VENV_DIR="${basedir}/venv"
 
-# Colors (suppressed when stdout is not a terminal)
+# Colors
 if [ -t 1 ]; then
     RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[0;33m'; CYAN='\033[0;36m'; NC='\033[0m'
 else
     RED=''; GREEN=''; YELLOW=''; CYAN=''; NC=''
 fi
 
-# --- Hugging Face token check ---
+# Hugging Face token check 
 HF_TOKEN_FILE="${HOME}/.cache/huggingface/token"
 if [[ -z "${HF_TOKEN:-}" ]] && [[ ! -f "${HF_TOKEN_FILE}" ]]; then
     echo ""
@@ -52,11 +49,11 @@ if [[ -z "${HF_TOKEN:-}" ]] && [[ ! -f "${HF_TOKEN_FILE}" ]]; then
     fi
 fi
 
-# --- Virtual environment check ---
+# Virtual environment check
 [[ -d "${VENV_DIR}" ]] || { echo -e "${RED}[ Error ]${NC} Downloader venv not found. Run setup_env.sh first."; exit 1; }
 source "${VENV_DIR}/bin/activate"
 
-# --- Helper functions ---
+# Validation functions
 model_exists() {
     local dest="$1"
     # Multimodal exports produce per-component files instead of a single openvino_model.xml
@@ -101,7 +98,7 @@ export_model() {
     echo -e "${GREEN}[ Pass ]${NC} ${SHORT_NAME}/${out_dir_name} exported successfully."
 }
 
-# --- Export INT8 and INT4 ---
+# Export INT8 and INT4
 echo ""
 echo -e "${GREEN}=== Gemma 3 4B IT ===${NC}"
 echo -e "${CYAN}[ Info ]${NC} Starting Gemma 3 4B IT model export..."

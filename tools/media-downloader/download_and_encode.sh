@@ -10,7 +10,7 @@ mediadir="${basedir}/media"
 collateraldir="${basedir}/../../collateral/media"
 mkdir -p "${mediadir}/mp4" "${mediadir}/hevc" "${mediadir}/avc" "${mediadir}/hevc_4k" "${mediadir}/avc_4k"
 
-# Colors (suppressed when stdout is not a terminal)
+# Colors
 if [ -t 1 ]; then
     RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[0;33m'; CYAN='\033[0;36m'; NC='\033[0m'
 else
@@ -69,7 +69,7 @@ fi
 
 docker_args+=(intel/dlstreamer:2026.1.0-20260414-weekly-ubuntu24)
 
-# Unified transcode: transcode <input> <output> <codec: h265|h264> <resolution: 1080p|4k>
+# Transcode video: transcode <input> <output> <codec: h265|h264> <resolution: 1080p|4k>
 transcode() {
     local in="$1" out="$2" codec="$3" res="$4"
     local width height bitrate encoder parser outdir ext
@@ -107,7 +107,7 @@ transcode() {
         2>&1 | grep -v -E '^\(gst-plugin-scanner:|libva info:|Redistribute latency|Got context from element'
 }
 
-# Transcode 1080p (check collateral destination — intermediate files stay in mediadir)
+# Transcode 1080p HEVC and AVC
 echo ""
 echo -e "${GREEN}=== Transcode ===${NC}"
 [[ -f "${collateraldir}/hevc/apple_1080.h265" ]] || transcode "apple.mp4" "apple_1080.h265" h265 1080p
@@ -115,14 +115,13 @@ echo -e "${GREEN}=== Transcode ===${NC}"
 [[ -f "${collateraldir}/avc/apple_1080.h264" ]]  || transcode "apple.mp4" "apple_1080.h264" h264 1080p
 [[ -f "${collateraldir}/avc/bears_1080.h264" ]]  || transcode "bears.mp4" "bears_1080.h264" h264 1080p
 
-# Transcode 4K (check collateral destination)
+# Transcode 4K HEVC and AVC
 [[ -f "${collateraldir}/hevc/apple_4k.h265" ]]   || transcode "apple.mp4" "apple_4k.h265" h265 4k
 [[ -f "${collateraldir}/hevc/bears_4k.h265" ]]   || transcode "bears.mp4" "bears_4k.h265" h265 4k
 [[ -f "${collateraldir}/avc/apple_4k.h264" ]]    || transcode "apple.mp4" "apple_4k.h264" h264 4k
 [[ -f "${collateraldir}/avc/bears_4k.h264" ]]    || transcode "bears.mp4" "bears_4k.h264" h264 4k
 
-# Loop 1080p files 100x for continuous streaming (used by edge-ai-pipelines)
-# Only loop+move if collateral is missing
+# Loop 1080p files 100x for longer testing and move to collateral
 mkdir -p "${collateraldir}/hevc" "${collateraldir}/avc"
 echo ""
 echo -e "${GREEN}=== Finalize ===${NC}"
@@ -151,7 +150,7 @@ else
     echo -e "${CYAN}[ Info ]${NC} 1080p looped files already in collateral. Skipping."
 fi
 
-# Move 4K files to collateral (only if not already there)
+# Move 4K files to collateral
 for pair in \
     "hevc_4k/apple_4k.h265:hevc/apple_4k.h265" \
     "hevc_4k/bears_4k.h265:hevc/bears_4k.h265" \

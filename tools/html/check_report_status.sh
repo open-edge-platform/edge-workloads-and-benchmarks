@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # SPDX-FileCopyrightText: (C) 2025 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
-#
+
 # Check whether the HTML report is up to date with benchmark results.
 # Called by: make status (top-level Makefile)
 
@@ -31,7 +31,7 @@ if [[ -d "${REPORTS_DIR}" ]]; then
         | sort -rn | head -1 | cut -d' ' -f2-)
 fi
 
-# --- Case 1: No report exists ---
+# Check if no report exists ---
 if [[ -z "${latest_report}" ]]; then
     if [[ "${disk_count}" -gt 0 ]]; then
         echo "[ Warning ] No report generated yet (${disk_count} CSV results on disk)"
@@ -40,19 +40,19 @@ if [[ -z "${latest_report}" ]]; then
     exit 0
 fi
 
-# Report exists — get its timestamp
+# Get report name and timestamp
 report_ts=$(stat -c '%Y' "${latest_report}")
 report_name="${latest_report##*/}"
 report_date=$(stat -c '%y' "${latest_report}" | cut -d. -f1)
 
-# Find newest CSV on disk
+# Find newest completed benchmark result on disk
 newest_csv=""
 if [[ "${disk_count}" -gt 0 ]]; then
     newest_csv=$(find "${RESULTS_DIR}" -name "*.csv" -printf '%T@ %p\n' 2>/dev/null \
         | sort -rn | head -1 | cut -d' ' -f2-)
 fi
 
-# Count results captured in data.json (used to build the report)
+# Count results captured in data.json
 report_count=0
 if [[ -f "${DATA_JSON}" ]]; then
     report_count=$(python3 -c "
@@ -69,10 +69,10 @@ except Exception:
 " 2>/dev/null)
 fi
 
-# --- Case 2: Report exists but stale ---
+# Update the report if stale or counts differ
 stale=false
 
-# Check timestamp: any CSV newer than the report?
+# Check timestamp for newer completed results (stale)
 if [[ -n "${newest_csv}" ]]; then
     csv_ts=$(stat -c '%Y' "${newest_csv}")
     if [[ "${csv_ts}" -gt "${report_ts}" ]]; then
@@ -80,7 +80,7 @@ if [[ -n "${newest_csv}" ]]; then
     fi
 fi
 
-# Check count: results on disk differ from what's in the report?
+# Check count for difference in completed result count (stale)
 delta=$((disk_count - report_count))
 
 if [[ "${stale}" == true ]] || [[ "${delta}" -ne 0 ]]; then
@@ -97,5 +97,5 @@ if [[ "${stale}" == true ]] || [[ "${delta}" -ne 0 ]]; then
     exit 0
 fi
 
-# --- Case 3: Report is up to date ---
+# If count matches and latest report, then up to date
 echo "[ Info ] Report is up to date (${report_name}, ${report_date})"

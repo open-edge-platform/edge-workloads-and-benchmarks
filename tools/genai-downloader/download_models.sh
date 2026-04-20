@@ -11,7 +11,7 @@ mkdir -p "${models_dir}"
 models_dir="$(realpath "${models_dir}")"
 main_venv="${basedir}/venv"
 
-# Colors (suppressed when stdout is not a terminal)
+# Colors
 if [ -t 1 ]; then
     RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[0;33m'; CYAN='\033[0;36m'; NC='\033[0m'
 else
@@ -22,7 +22,7 @@ fi
 
 source "${main_venv}/bin/activate"
 
-# --- Hugging Face token check ---
+# Hugging Face token check 
 # Several models (Llama, Mistral) are gated and require accepting the
 # license on huggingface.co and providing an access token.
 HF_TOKEN_FILE="${HOME}/.cache/huggingface/token"
@@ -56,12 +56,14 @@ precision_dir() {
     esac
 }
 
+# Validation function
 model_exists() {
     local dest="$1"
     [[ -d "${dest}" ]] || return 1
     [[ -f "${dest}/openvino_model.xml" ]]
 }
 
+# Export LLM models
 export_model() {
     local short_name="$1"
     local hf_id="$2"

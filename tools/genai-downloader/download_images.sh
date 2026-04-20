@@ -12,14 +12,14 @@ basedir="$(realpath "$(dirname -- "$0")")"
 imgdir="${basedir}/../../collateral/media/images"
 mkdir -p "${imgdir}"
 
-# Colors (suppressed when stdout is not a terminal)
+# Colors
 if [ -t 1 ]; then
     RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[0;33m'; CYAN='\033[0;36m'; NC='\033[0m'
 else
     RED=''; GREEN=''; YELLOW=''; CYAN=''; NC=''
 fi
 
-# A representative COCO val2017 scene (bus + people, good object diversity)
+# Coco validation image
 COCO_IMAGE_URL="http://images.cocodataset.org/val2017/000000000139.jpg"
 COCO_ORIGINAL="${imgdir}/coco_original.jpg"
 
@@ -32,7 +32,7 @@ else
     mv -f "${COCO_ORIGINAL}.part" "${COCO_ORIGINAL}"
 fi
 
-# Resize to standard VLM input resolutions
+# Resize to target VLM input resolutions
 SIZES=("224x224" "448x448" "640x640" "1080x1920")
 
 for size in "${SIZES[@]}"; do

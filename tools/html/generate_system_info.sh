@@ -55,7 +55,7 @@ if command -v docker >/dev/null 2>&1; then
     fi
 fi
 
-# OpenVINO Version (native, from vision-benchmarks venv)
+# OpenVINO Version (from Python virtual environment)
 OpenVINO_Native="N/A"
 VENV_PATH="${SCRIPT_DIR}/../../workloads/vision-benchmarks/venv"
 if [ -d "$VENV_PATH" ]; then
@@ -118,7 +118,7 @@ fi
 # Timestamp
 Timestamp=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
 
-# Generate JSON (using jq for safe value escaping)
+# Generate JSON output
 jq -n \
     --arg generated "$Timestamp" \
     --arg sys_name "$System" \

@@ -15,10 +15,10 @@ from openvino import Core
 from torch.utils.data import DataLoader, Subset
 from tqdm import tqdm
 
-# Suppress noisy NNCF INFO messages (imported early so it takes effect everywhere)
+# Suppress verbose NNCF INFO messages
 logging.getLogger("nncf").setLevel(logging.WARNING)
 
-# ANSI color helpers
+# Colors
 CYAN = "\033[0;36m"
 GREEN = "\033[0;32m"
 YELLOW = "\033[0;33m"

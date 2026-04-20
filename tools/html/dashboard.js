@@ -19,7 +19,7 @@ const COLORS = {
   GRAY: '#666'
 };
 
-/** Read a CSS custom property from :root (respects [data-theme] overrides) */
+/** Read a CSS custom property from :root */
 function cssVar(name) {
   return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 }
@@ -713,7 +713,7 @@ class PipelineDashboard extends BaseDashboard {
       });
     }
 
-    // Theoretical streams chart — stacked for concurrent
+    // Theoretical streams chart with stacking for concurrent pipelines
     const theoPri = [], theoSec = [], theoPriColors = [], theoSecColors = [];
     valid.forEach(r => {
       if (isConcurrent(r) && r.primary_theoretical != null && r.secondary_theoretical != null) {
@@ -912,7 +912,7 @@ class VisionDashboard extends BaseDashboard {
   renderCharts() {
     Object.values(this.charts).forEach(c => c && c.destroy());
 
-    // ---- Throughput charts: split into Detection (YOLO) and Classification ----
+    // ---- Throughput charts: split into Detection and Classification ----
     const tputData = this.summary.filter(r => r.mode === 'tput' && r.avg_throughput != null);
     const tputDet = tputData.filter(r => isDetectionModel(r));
     const tputCls = tputData.filter(r => !isDetectionModel(r));
@@ -1407,7 +1407,7 @@ class GenaiDashboard extends BaseDashboard {
 
 
 // =========================================================================
-// Summary Dashboard (unified overview)
+// Summary Dashboard
 // =========================================================================
 
 class SummaryDashboard {
@@ -1515,7 +1515,7 @@ class SummaryDashboard {
       }));
     }
 
-    // Theoretical streams chart — stacked for concurrent
+    // Theoretical streams chart with stacking for concurrent pipelines
     const theoPri = [], theoSec = [], theoPriColors = [], theoSecColors = [];
     valid.forEach(r => {
       if (isConcurrent(r) && r.primary_theoretical != null && r.secondary_theoretical != null) {
@@ -1821,7 +1821,7 @@ class WorkloadManager {
       };
     }
 
-    // Handle legacy data.json format (flat summary/raw without workload keys)
+    // Handle legacy data.json format
     if (this.data.summary && !this.data.edge_ai_pipelines) {
       this.data = {
         edge_ai_pipelines: { summary: this.data.summary, raw: this.data.raw || [] },
@@ -2068,7 +2068,7 @@ function initChartExportButtons() {
       ctx.fillText(footerText, totalW - pad, y + 10);
     }
 
-    // Build filename: workload-name_chart-name_timestamp.png
+    // Build filename: {workload-name}_{chart-name}_{timestamp}.png
     const workload = getWorkloadName(item);
     const chart = titleEl ? slugify(titleEl.textContent) : 'chart';
     const ts = new Date().toISOString().replace(/[-:T]/g, '').slice(0, 15);

@@ -6,10 +6,9 @@
 # MiniCPM-V 2.6 — Multimodal Vision-Language Model
 # https://huggingface.co/openbmb/MiniCPM-V-2_6
 #
-# 8B params (SigLip-400M + Qwen2-7B). Gated model — requires accepting
+# 8B parameters
+# Model License: MIT license — gated model requires accepting
 # terms at huggingface.co and providing an access token.
-#
-# This script uses the shared downloader venv.
 
 set -e
 
@@ -22,14 +21,14 @@ SHORT_NAME="minicpm-v-2.6"
 HF_ID="openbmb/MiniCPM-V-2_6"
 VENV_DIR="${basedir}/venv"
 
-# Colors (suppressed when stdout is not a terminal)
+# Colors
 if [ -t 1 ]; then
     RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[0;33m'; CYAN='\033[0;36m'; NC='\033[0m'
 else
     RED=''; GREEN=''; YELLOW=''; CYAN=''; NC=''
 fi
 
-# --- Hugging Face token check ---
+# Hugging Face token check
 HF_TOKEN_FILE="${HOME}/.cache/huggingface/token"
 if [[ -z "${HF_TOKEN:-}" ]] && [[ ! -f "${HF_TOKEN_FILE}" ]]; then
     echo ""
@@ -50,17 +49,18 @@ if [[ -z "${HF_TOKEN:-}" ]] && [[ ! -f "${HF_TOKEN_FILE}" ]]; then
     fi
 fi
 
-# --- Virtual environment check ---
+# Virtual environment check
 [[ -d "${VENV_DIR}" ]] || { echo -e "${RED}[ Error ]${NC} Downloader venv not found. Run setup_env.sh first."; exit 1; }
 source "${VENV_DIR}/bin/activate"
 
-# --- Helper functions ---
+# Validation function
 model_exists() {
     local dest="$1"
     # Multimodal exports produce per-component files instead of a single openvino_model.xml
     [[ -d "${dest}" ]] && [[ -f "${dest}/openvino_language_model.xml" ]]
 }
 
+# Export MiniCPM-V 2.6
 export_model() {
     local weight_fmt="$1"
     local out_dir_name="$2"
@@ -99,7 +99,7 @@ export_model() {
     echo -e "${GREEN}[ Pass ]${NC} ${SHORT_NAME}/${out_dir_name} exported successfully."
 }
 
-# --- Export INT8 and INT4 ---
+# Export INT8 and INT4
 echo ""
 echo -e "${GREEN}=== MiniCPM-V 2.6 ===${NC}"
 echo -e "${CYAN}[ Info ]${NC} Starting MiniCPM-V 2.6 model export..."

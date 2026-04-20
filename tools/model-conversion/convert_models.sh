@@ -10,7 +10,7 @@ modeldir="${basedir}/models"
 datasetdir="${basedir}/datasets"
 collateraldir="${basedir}/../../collateral/models"
 
-# Colors (suppressed when stdout is not a terminal)
+# Colors
 if [ -t 1 ]; then
     RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[0;33m'; CYAN='\033[0;36m'; NC='\033[0m'
 else
@@ -93,7 +93,7 @@ argparse "$@"
 ensure_venv
 source "${basedir}/venv/bin/activate"
 
-# Suppress noisy library output
+# Suppress verbose library output
 export NNCF_LOG_LEVEL=WARNING
 export PYTHONWARNINGS="ignore::UserWarning"
 export YOLO_VERBOSE=false
@@ -220,8 +220,9 @@ validate_model "YOLOv11m" \
     "${collateraldir}/detection/yolov11m_640x640/INT8/yolo11m.bin" || ((failed++))
 
 echo ""
-echo "Classification Models:"
 
+# Validate classification models
+echo "Classification Models:"
 validate_model "ResNet-50" \
     "${collateraldir}/classification/resnet-v1-50-tf/INT8/resnet-v1-50-tf.xml" \
     "${collateraldir}/classification/resnet-v1-50-tf/INT8/resnet-v1-50-tf.bin" || ((failed++))
