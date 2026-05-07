@@ -34,10 +34,15 @@ if [[ -z "${HF_TOKEN:-}" ]] && [[ ! -f "${HF_TOKEN_FILE}" ]]; then
     echo "    1. Run: huggingface-cli login"
     echo "    2. Or:  export HF_TOKEN=hf_..."
     echo ""
-    read -rp "Enter your Hugging Face token (or press Enter to try without): " user_token
+    printf "Enter your Hugging Face token (or press Enter to try without): "
+    read -rs user_token
+    echo ""
     if [[ -n "${user_token}" ]]; then
+        mkdir -p "$(dirname "${HF_TOKEN_FILE}")"
+        printf '%s' "${user_token}" > "${HF_TOKEN_FILE}"
+        chmod 600 "${HF_TOKEN_FILE}"
         export HF_TOKEN="${user_token}"
-        echo -e "${CYAN}[ Info ]${NC} Token set for this session."
+        echo -e "${CYAN}[ Info ]${NC} Token saved to ${HF_TOKEN_FILE}."
     else
         echo -e "${CYAN}[ Info ]${NC} Continuing without token — gated model downloads may fail."
     fi
