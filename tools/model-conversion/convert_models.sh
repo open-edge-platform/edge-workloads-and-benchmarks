@@ -103,53 +103,55 @@ echo ""
 echo -e "${CYAN}[ Info ]${NC} Starting model download and conversion..."
 echo ""
 
+conv_failed=0
+
 # Classification models (ResNet-50, MobileNet-v2)
 if [[ -d "${IMAGENET_ROOT}" ]]; then
     validate_imagenet_root "${IMAGENET_ROOT}"
     echo -e "${GREEN}=== ResNet-50 ===${NC}"
     echo -e "${CYAN}[ Info ]${NC} Converting ResNet-50 with ImageNet calibration..."
-    python3 "${basedir}/download-models/resnet_downloader.py" -i="${IMAGENET_ROOT}"
+    python3 "${basedir}/download-models/resnet_downloader.py" -i="${IMAGENET_ROOT}" || { echo -e "${RED}[ FAILED ]${NC} ResNet-50"; ((conv_failed++)) || true; }
     echo ""
     echo -e "${GREEN}=== MobileNet-v2 ===${NC}"
     echo -e "${CYAN}[ Info ]${NC} Converting MobileNet-v2 with ImageNet calibration..."
-    python3 "${basedir}/download-models/mobilenet_downloader.py" -i="${IMAGENET_ROOT}"
+    python3 "${basedir}/download-models/mobilenet_downloader.py" -i="${IMAGENET_ROOT}" || { echo -e "${RED}[ FAILED ]${NC} MobileNet-v2"; ((conv_failed++)) || true; }
     echo ""
 else
     echo -e "${GREEN}=== ResNet-50 ===${NC}"
     echo -e "${CYAN}[ Info ]${NC} Converting ResNet-50 with CIFAR-100 calibration..."
-    python3 "${basedir}/download-models/resnet_downloader.py"
+    python3 "${basedir}/download-models/resnet_downloader.py" || { echo -e "${RED}[ FAILED ]${NC} ResNet-50"; ((conv_failed++)) || true; }
     echo ""
     echo -e "${GREEN}=== MobileNet-v2 ===${NC}"
     echo -e "${CYAN}[ Info ]${NC} Converting MobileNet-v2 with CIFAR-100 calibration..."
-    python3 "${basedir}/download-models/mobilenet_downloader.py"
+    python3 "${basedir}/download-models/mobilenet_downloader.py" || { echo -e "${RED}[ FAILED ]${NC} MobileNet-v2"; ((conv_failed++)) || true; }
     echo ""
 fi
 
 # Detection models (YOLO variants with COCO calibration)
 echo -e "${GREEN}=== Ultralytics Setup ===${NC}"
 echo -e "${CYAN}[ Info ]${NC} Initializing Ultralytics settings..."
-python3 "${basedir}/download-models/initialize_ultralytics.py" -i "${datasetdir}"
+python3 "${basedir}/download-models/initialize_ultralytics.py" -i "${datasetdir}" || { echo -e "${RED}[ FAILED ]${NC} Ultralytics setup"; ((conv_failed++)) || true; }
 echo ""
 echo -e "${GREEN}=== YOLOv11n ===${NC}"
 echo -e "${CYAN}[ Info ]${NC} Converting YOLOv11n with COCO calibration..."
-python3 "${basedir}/download-models/yolo_downloader.py" -m yolo11n -i "${datasetdir}" -o "${modeldir}" -s "128" --subset-size "512"
+python3 "${basedir}/download-models/yolo_downloader.py" -m yolo11n -i "${datasetdir}" -o "${modeldir}" -s "128" --subset-size "512" || { echo -e "${RED}[ FAILED ]${NC} YOLOv11n"; ((conv_failed++)) || true; }
 echo ""
 echo -e "${GREEN}=== YOLOv11m ===${NC}"
 echo -e "${CYAN}[ Info ]${NC} Converting YOLOv11m with COCO calibration..."
-python3 "${basedir}/download-models/yolo_downloader.py" -m yolo11m -i "${datasetdir}" -o "${modeldir}" -s "128" --subset-size "512"
+python3 "${basedir}/download-models/yolo_downloader.py" -m yolo11m -i "${datasetdir}" -o "${modeldir}" -s "128" --subset-size "512" || { echo -e "${RED}[ FAILED ]${NC} YOLOv11m"; ((conv_failed++)) || true; }
 echo ""
 
 echo -e "${GREEN}=== YOLOv5m ===${NC}"
 echo -e "${CYAN}[ Info ]${NC} Downloading pre-converted YOLOv5m model..."
 mkdir -p "${modeldir}/yolo-v5m"
 
-download_raw "https://raw.githubusercontent.com/dlstreamer/pipeline-zoo-models/refs/heads/main/storage/yolov5m-640_INT8/FP16-INT8/yolov5m-640_INT8.xml" "${modeldir}/yolo-v5m/yolov5m-640_INT8.xml"
-download_raw "https://raw.githubusercontent.com/dlstreamer/pipeline-zoo-models/refs/heads/main/storage/yolov5m-640_INT8/FP16-INT8/yolov5m-640_INT8.bin" "${modeldir}/yolo-v5m/yolov5m-640_INT8.bin"
-download_raw "https://raw.githubusercontent.com/dlstreamer/pipeline-zoo-models/refs/heads/main/storage/yolov5m-640_INT8/yolo-v5.json" "${modeldir}/yolo-v5m/yolo-v5.json"
+download_raw "https://raw.githubusercontent.com/dlstreamer/pipeline-zoo-models/refs/heads/main/storage/yolov5m-640_INT8/FP16-INT8/yolov5m-640_INT8.xml" "${modeldir}/yolo-v5m/yolov5m-640_INT8.xml" || { echo -e "${RED}[ FAILED ]${NC} YOLOv5m xml"; ((conv_failed++)) || true; }
+download_raw "https://raw.githubusercontent.com/dlstreamer/pipeline-zoo-models/refs/heads/main/storage/yolov5m-640_INT8/FP16-INT8/yolov5m-640_INT8.bin" "${modeldir}/yolo-v5m/yolov5m-640_INT8.bin" || { echo -e "${RED}[ FAILED ]${NC} YOLOv5m bin"; ((conv_failed++)) || true; }
+download_raw "https://raw.githubusercontent.com/dlstreamer/pipeline-zoo-models/refs/heads/main/storage/yolov5m-640_INT8/yolo-v5.json" "${modeldir}/yolo-v5m/yolo-v5.json" || { echo -e "${RED}[ FAILED ]${NC} YOLOv5m json"; ((conv_failed++)) || true; }
 
 mkdir -p "${modeldir}/resnet-50" "${modeldir}/mobilenet-v2"
-download_raw "https://raw.githubusercontent.com/open-edge-platform/dlstreamer/refs/heads/main/samples/gstreamer/model_proc/public/classification-optimized.json" "${modeldir}/resnet-50/resnet-50.json"
-download_raw "https://raw.githubusercontent.com/open-edge-platform/dlstreamer/refs/heads/main/samples/gstreamer/model_proc/public/classification-optimized.json" "${modeldir}/mobilenet-v2/mobilenet-v2.json"
+download_raw "https://raw.githubusercontent.com/open-edge-platform/dlstreamer/refs/heads/main/samples/gstreamer/model_proc/public/classification-optimized.json" "${modeldir}/resnet-50/resnet-50.json" || { echo -e "${RED}[ FAILED ]${NC} ResNet-50 json"; ((conv_failed++)) || true; }
+download_raw "https://raw.githubusercontent.com/open-edge-platform/dlstreamer/refs/heads/main/samples/gstreamer/model_proc/public/classification-optimized.json" "${modeldir}/mobilenet-v2/mobilenet-v2.json" || { echo -e "${RED}[ FAILED ]${NC} MobileNet-v2 json"; ((conv_failed++)) || true; }
 
 echo ""
 echo -e "${CYAN}[ Info ]${NC} Copying models to collateral directory..."
@@ -162,24 +164,24 @@ mkdir -p "${collateraldir}/classification/resnet-v1-50-tf/INT8"
 mkdir -p "${collateraldir}/classification/mobilenet-v2-1.0-224-tf/INT8"
 
 # Detection models
-mv "${modeldir}/yolo11n/yolo11n_int8.xml" "${collateraldir}/detection/yolov11n_640x640/INT8/yolo11n.xml"
-mv "${modeldir}/yolo11n/yolo11n_int8.bin" "${collateraldir}/detection/yolov11n_640x640/INT8/yolo11n.bin"
+mv "${modeldir}/yolo11n/yolo11n_int8.xml" "${collateraldir}/detection/yolov11n_640x640/INT8/yolo11n.xml" 2>/dev/null || true
+mv "${modeldir}/yolo11n/yolo11n_int8.bin" "${collateraldir}/detection/yolov11n_640x640/INT8/yolo11n.bin" 2>/dev/null || true
 
-mv "${modeldir}/yolo-v5m/yolov5m-640_INT8.xml" "${collateraldir}/detection/yolov5m_640x640/INT8/."
-mv "${modeldir}/yolo-v5m/yolov5m-640_INT8.bin" "${collateraldir}/detection/yolov5m_640x640/INT8/."
-mv "${modeldir}/yolo-v5m/yolo-v5.json" "${collateraldir}/detection/yolov5m_640x640/."
+mv "${modeldir}/yolo-v5m/yolov5m-640_INT8.xml" "${collateraldir}/detection/yolov5m_640x640/INT8/." 2>/dev/null || true
+mv "${modeldir}/yolo-v5m/yolov5m-640_INT8.bin" "${collateraldir}/detection/yolov5m_640x640/INT8/." 2>/dev/null || true
+mv "${modeldir}/yolo-v5m/yolo-v5.json" "${collateraldir}/detection/yolov5m_640x640/." 2>/dev/null || true
 
-mv "${modeldir}/yolo11m/yolo11m_int8.xml" "${collateraldir}/detection/yolov11m_640x640/INT8/yolo11m.xml"
-mv "${modeldir}/yolo11m/yolo11m_int8.bin" "${collateraldir}/detection/yolov11m_640x640/INT8/yolo11m.bin"
+mv "${modeldir}/yolo11m/yolo11m_int8.xml" "${collateraldir}/detection/yolov11m_640x640/INT8/yolo11m.xml" 2>/dev/null || true
+mv "${modeldir}/yolo11m/yolo11m_int8.bin" "${collateraldir}/detection/yolov11m_640x640/INT8/yolo11m.bin" 2>/dev/null || true
 
 # Classification models
-mv "${modeldir}/resnet-50/resnet-50_int8.xml" "${collateraldir}/classification/resnet-v1-50-tf/INT8/resnet-v1-50-tf.xml"
-mv "${modeldir}/resnet-50/resnet-50_int8.bin" "${collateraldir}/classification/resnet-v1-50-tf/INT8/resnet-v1-50-tf.bin"
-mv "${modeldir}/resnet-50/resnet-50.json" "${collateraldir}/classification/resnet-v1-50-tf/."
+mv "${modeldir}/resnet-50/resnet-50_int8.xml" "${collateraldir}/classification/resnet-v1-50-tf/INT8/resnet-v1-50-tf.xml" 2>/dev/null || true
+mv "${modeldir}/resnet-50/resnet-50_int8.bin" "${collateraldir}/classification/resnet-v1-50-tf/INT8/resnet-v1-50-tf.bin" 2>/dev/null || true
+mv "${modeldir}/resnet-50/resnet-50.json" "${collateraldir}/classification/resnet-v1-50-tf/." 2>/dev/null || true
 
-mv "${modeldir}/mobilenet-v2/mobilenetv2_int8.xml" "${collateraldir}/classification/mobilenet-v2-1.0-224-tf/INT8/mobilenet-v2-1.0-224.xml"
-mv "${modeldir}/mobilenet-v2/mobilenetv2_int8.bin" "${collateraldir}/classification/mobilenet-v2-1.0-224-tf/INT8/mobilenet-v2-1.0-224.bin"
-mv "${modeldir}/mobilenet-v2/mobilenet-v2.json" "${collateraldir}/classification/mobilenet-v2-1.0-224-tf/."
+mv "${modeldir}/mobilenet-v2/mobilenetv2_int8.xml" "${collateraldir}/classification/mobilenet-v2-1.0-224-tf/INT8/mobilenet-v2-1.0-224.xml" 2>/dev/null || true
+mv "${modeldir}/mobilenet-v2/mobilenetv2_int8.bin" "${collateraldir}/classification/mobilenet-v2-1.0-224-tf/INT8/mobilenet-v2-1.0-224.bin" 2>/dev/null || true
+mv "${modeldir}/mobilenet-v2/mobilenet-v2.json" "${collateraldir}/classification/mobilenet-v2-1.0-224-tf/." 2>/dev/null || true
 
 echo ""
 echo -e "${CYAN}[ Info ]${NC} Validating model conversion..."
@@ -203,21 +205,21 @@ validate_model() {
 }
 
 # Track failures
-failed=0
+failed=${conv_failed}
 
 # Validate detection models
 echo "Detection Models:"
 validate_model "YOLOv11n" \
     "${collateraldir}/detection/yolov11n_640x640/INT8/yolo11n.xml" \
-    "${collateraldir}/detection/yolov11n_640x640/INT8/yolo11n.bin" || ((failed++))
+    "${collateraldir}/detection/yolov11n_640x640/INT8/yolo11n.bin" || { ((failed++)) || true; }
 
 validate_model "YOLOv5m" \
     "${collateraldir}/detection/yolov5m_640x640/INT8/yolov5m-640_INT8.xml" \
-    "${collateraldir}/detection/yolov5m_640x640/INT8/yolov5m-640_INT8.bin" || ((failed++))
+    "${collateraldir}/detection/yolov5m_640x640/INT8/yolov5m-640_INT8.bin" || { ((failed++)) || true; }
 
 validate_model "YOLOv11m" \
     "${collateraldir}/detection/yolov11m_640x640/INT8/yolo11m.xml" \
-    "${collateraldir}/detection/yolov11m_640x640/INT8/yolo11m.bin" || ((failed++))
+    "${collateraldir}/detection/yolov11m_640x640/INT8/yolo11m.bin" || { ((failed++)) || true; }
 
 echo ""
 
@@ -225,11 +227,11 @@ echo ""
 echo "Classification Models:"
 validate_model "ResNet-50" \
     "${collateraldir}/classification/resnet-v1-50-tf/INT8/resnet-v1-50-tf.xml" \
-    "${collateraldir}/classification/resnet-v1-50-tf/INT8/resnet-v1-50-tf.bin" || ((failed++))
+    "${collateraldir}/classification/resnet-v1-50-tf/INT8/resnet-v1-50-tf.bin" || { ((failed++)) || true; }
 
 validate_model "MobileNet-v2" \
     "${collateraldir}/classification/mobilenet-v2-1.0-224-tf/INT8/mobilenet-v2-1.0-224.xml" \
-    "${collateraldir}/classification/mobilenet-v2-1.0-224-tf/INT8/mobilenet-v2-1.0-224.bin" || ((failed++))
+    "${collateraldir}/classification/mobilenet-v2-1.0-224-tf/INT8/mobilenet-v2-1.0-224.bin" || { ((failed++)) || true; }
 
 echo ""
 if [[ $failed -eq 0 ]]; then
