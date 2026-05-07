@@ -1,5 +1,6 @@
 pipelines/
 media/
+media
 models/
 datasets/
 source-models/
