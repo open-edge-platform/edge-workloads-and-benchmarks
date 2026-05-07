@@ -110,16 +110,17 @@ transcode() {
 # Transcode 1080p HEVC and AVC
 echo ""
 echo -e "${GREEN}=== Transcode ===${NC}"
-[[ -f "${collateraldir}/hevc/apple_1080.h265" ]] || transcode "apple.mp4" "apple_1080.h265" h265 1080p
-[[ -f "${collateraldir}/hevc/bears_1080.h265" ]] || transcode "bears.mp4" "bears_1080.h265" h265 1080p
-[[ -f "${collateraldir}/avc/apple_1080.h264" ]]  || transcode "apple.mp4" "apple_1080.h264" h264 1080p
-[[ -f "${collateraldir}/avc/bears_1080.h264" ]]  || transcode "bears.mp4" "bears_1080.h264" h264 1080p
+transcode_failed=0
+[[ -f "${collateraldir}/hevc/apple_1080.h265" ]] || transcode "apple.mp4" "apple_1080.h265" h265 1080p || { echo -e "${RED}[ FAILED ]${NC} apple 1080p HEVC"; ((transcode_failed++)) || true; }
+[[ -f "${collateraldir}/hevc/bears_1080.h265" ]] || transcode "bears.mp4" "bears_1080.h265" h265 1080p || { echo -e "${RED}[ FAILED ]${NC} bears 1080p HEVC"; ((transcode_failed++)) || true; }
+[[ -f "${collateraldir}/avc/apple_1080.h264" ]]  || transcode "apple.mp4" "apple_1080.h264" h264 1080p || { echo -e "${RED}[ FAILED ]${NC} apple 1080p AVC"; ((transcode_failed++)) || true; }
+[[ -f "${collateraldir}/avc/bears_1080.h264" ]]  || transcode "bears.mp4" "bears_1080.h264" h264 1080p || { echo -e "${RED}[ FAILED ]${NC} bears 1080p AVC"; ((transcode_failed++)) || true; }
 
 # Transcode 4K HEVC and AVC
-[[ -f "${collateraldir}/hevc/apple_4k.h265" ]]   || transcode "apple.mp4" "apple_4k.h265" h265 4k
-[[ -f "${collateraldir}/hevc/bears_4k.h265" ]]   || transcode "bears.mp4" "bears_4k.h265" h265 4k
-[[ -f "${collateraldir}/avc/apple_4k.h264" ]]    || transcode "apple.mp4" "apple_4k.h264" h264 4k
-[[ -f "${collateraldir}/avc/bears_4k.h264" ]]    || transcode "bears.mp4" "bears_4k.h264" h264 4k
+[[ -f "${collateraldir}/hevc/apple_4k.h265" ]]   || transcode "apple.mp4" "apple_4k.h265" h265 4k || { echo -e "${RED}[ FAILED ]${NC} apple 4K HEVC"; ((transcode_failed++)) || true; }
+[[ -f "${collateraldir}/hevc/bears_4k.h265" ]]   || transcode "bears.mp4" "bears_4k.h265" h265 4k || { echo -e "${RED}[ FAILED ]${NC} bears 4K HEVC"; ((transcode_failed++)) || true; }
+[[ -f "${collateraldir}/avc/apple_4k.h264" ]]    || transcode "apple.mp4" "apple_4k.h264" h264 4k || { echo -e "${RED}[ FAILED ]${NC} apple 4K AVC"; ((transcode_failed++)) || true; }
+[[ -f "${collateraldir}/avc/bears_4k.h264" ]]    || transcode "bears.mp4" "bears_4k.h264" h264 4k || { echo -e "${RED}[ FAILED ]${NC} bears 4K AVC"; ((transcode_failed++)) || true; }
 
 # Loop 1080p files 100x for longer testing and move to collateral
 mkdir -p "${collateraldir}/hevc" "${collateraldir}/avc"
@@ -142,9 +143,9 @@ if [[ "${needs_loop}" -eq 1 ]]; then
         filename="${pair##*/}"
         : > "${mediadir}/${codec_dir}/${filename%.???}_loop100.${filename##*.}"
         for _ in $(seq 100); do
-            cat "${mediadir}/${codec_dir}/${filename}" >> "${mediadir}/${codec_dir}/${filename%.???}_loop100.${filename##*.}"
+            cat "${mediadir}/${codec_dir}/${filename}" >> "${mediadir}/${codec_dir}/${filename%.???}_loop100.${filename##*.}" || { echo -e "${RED}[ Error ]${NC} Failed to loop ${pair}"; break; }
         done
-        mv "${mediadir}/${codec_dir}/${filename%.???}_loop100.${filename##*.}" "${collateraldir}/${pair}"
+        mv "${mediadir}/${codec_dir}/${filename%.???}_loop100.${filename##*.}" "${collateraldir}/${pair}" || true
     done
 else
     echo -e "${CYAN}[ Info ]${NC} 1080p looped files already in collateral. Skipping."
@@ -158,10 +159,15 @@ for pair in \
     "avc_4k/bears_4k.h264:avc/bears_4k.h264"; do
     src="${pair%%:*}"; dst="${pair##*:}"
     if [[ ! -f "${collateraldir}/${dst}" && -f "${mediadir}/${src}" ]]; then
-        mv "${mediadir}/${src}" "${collateraldir}/${dst}"
+        mv "${mediadir}/${src}" "${collateraldir}/${dst}" || true
     fi
 done
 
 echo -e "${CYAN}[ Info ]${NC} 1080p (looped x100): hevc/apple_1080.h265, hevc/bears_1080.h265, avc/apple_1080.h264, avc/bears_1080.h264"
 echo -e "${CYAN}[ Info ]${NC} 4K (single-clip): hevc/apple_4k.h265, hevc/bears_4k.h265, avc/apple_4k.h264, avc/bears_4k.h264"
 echo -e "${GREEN}[ Success ]${NC} Video files successfully converted. Ending media transcode."
+
+if [[ ${transcode_failed} -gt 0 ]]; then
+    echo -e "${RED}[ Error ]${NC} ${transcode_failed} transcode(s) failed"
+    exit 1
+fi
