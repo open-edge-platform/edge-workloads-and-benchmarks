@@ -22,6 +22,7 @@ fi
 # Coco validation image
 COCO_IMAGE_URL="http://images.cocodataset.org/val2017/000000000139.jpg"
 COCO_ORIGINAL="${imgdir}/coco_original.jpg"
+COCO_MD5="a0204aa65acc51cd8ffc128e5e94a05c"
 
 # Download the source image
 if [[ -f "${COCO_ORIGINAL}" ]]; then
@@ -30,6 +31,16 @@ else
     echo -e "${CYAN}[ Info ]${NC} Downloading COCO val2017 image..."
     wget -q --show-progress --tries=5 --timeout=30 -O "${COCO_ORIGINAL}.part" "${COCO_IMAGE_URL}"
     mv -f "${COCO_ORIGINAL}.part" "${COCO_ORIGINAL}"
+fi
+
+# Verify integrity
+actual_md5=$(md5sum "${COCO_ORIGINAL}" | awk '{print $1}')
+if [[ "${actual_md5}" != "${COCO_MD5}" ]]; then
+    echo -e "${RED}[ Error ]${NC} Checksum mismatch for ${COCO_ORIGINAL##*/}"
+    echo "  Expected: ${COCO_MD5}"
+    echo "  Got:      ${actual_md5}"
+    rm -f "${COCO_ORIGINAL}"
+    exit 1
 fi
 
 # Resize to target VLM input resolutions
