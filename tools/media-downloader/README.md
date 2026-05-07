@@ -23,7 +23,7 @@ Cleanup:
 ```
 ## Requirements
 
-- Docker software with Deep Learning Streamer (DL Streamer) container (`intel/dlstreamer:2026.0.0-ubuntu24`).
+- Docker software with Deep Learning Streamer (DL Streamer) container (`intel/dlstreamer:2026.1.0-20260505-weekly-ubuntu24`).
 - GPU with VA-API support (integrated or discrete GPU).
 
 

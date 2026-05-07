@@ -67,7 +67,7 @@ else
     exit 1
 fi
 
-docker_args+=(intel/dlstreamer:2026.1.0-20260414-weekly-ubuntu24)
+docker_args+=(intel/dlstreamer:2026.1.0-20260505-weekly-ubuntu24)
 
 # Transcode video: transcode <input> <output> <codec: h265|h264> <resolution: 1080p|4k>
 transcode() {
