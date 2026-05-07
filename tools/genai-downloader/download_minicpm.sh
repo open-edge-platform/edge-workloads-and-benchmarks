@@ -93,7 +93,7 @@ export_model() {
 
     if ! model_exists "${dest}"; then
         echo -e "${RED}[ Error ]${NC} Export failed — no openvino_model.xml in ${dest}"
-        exit 1
+        return 1
     fi
 
     echo -e "${GREEN}[ Pass ]${NC} ${SHORT_NAME}/${out_dir_name} exported successfully."
@@ -104,11 +104,17 @@ echo ""
 echo -e "${GREEN}=== MiniCPM-V 2.6 ===${NC}"
 echo -e "${CYAN}[ Info ]${NC} Starting MiniCPM-V 2.6 model export..."
 
-export_model "int8" "INT8_ASYM"
+failed=0
+export_model "int8" "INT8_ASYM" || { echo -e "${RED}[ FAILED ]${NC} ${SHORT_NAME} int8"; ((failed++)) || true; }
 echo ""
-export_model "int4" "INT4_SYM_CW"
+export_model "int4" "INT4_SYM_CW" || { echo -e "${RED}[ FAILED ]${NC} ${SHORT_NAME} int4"; ((failed++)) || true; }
 
 deactivate
 
 echo ""
 echo -e "${CYAN}[ Info ]${NC} MiniCPM-V 2.6 export complete."
+
+if [[ ${failed} -gt 0 ]]; then
+    echo -e "${RED}[ Error ]${NC} ${failed} export(s) failed"
+    exit 1
+fi

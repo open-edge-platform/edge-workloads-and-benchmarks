@@ -40,12 +40,14 @@ setup:
 .PHONY: download
 download: setup
 	@printf "\033[0;36m[ Info ]\033[0m Downloading and exporting GenAI models...\n"
-	@bash download_models.sh
-	@bash download_minicpm.sh
-	@bash download_gemma3.sh
-	@bash download_phi4mm.sh
-	@printf "\033[0;36m[ Info ]\033[0m Downloading VLM test images...\n"
-	@bash download_images.sh
+	@failed=0; \
+	bash download_models.sh  || { printf "\033[0;31m[ FAILED ]\033[0m LLM models\n";  failed=$$((failed+1)); }; \
+	bash download_minicpm.sh || { printf "\033[0;31m[ FAILED ]\033[0m MiniCPM\n";     failed=$$((failed+1)); }; \
+	bash download_gemma3.sh  || { printf "\033[0;31m[ FAILED ]\033[0m Gemma3\n";      failed=$$((failed+1)); }; \
+	bash download_phi4mm.sh  || { printf "\033[0;31m[ FAILED ]\033[0m Phi4MM\n";      failed=$$((failed+1)); }; \
+	printf "\033[0;36m[ Info ]\033[0m Downloading VLM test images...\n"; \
+	bash download_images.sh  || { printf "\033[0;31m[ FAILED ]\033[0m images\n";      failed=$$((failed+1)); }; \
+	if [ $$failed -gt 0 ]; then printf "\033[0;31m[ Error ]\033[0m $$failed download(s) failed\n"; exit 1; fi
 
 .PHONY: verify
 verify:

@@ -99,21 +99,28 @@ export_model() {
 
     if ! model_exists "${dest}"; then
         echo -e "${RED}[ Error ]${NC} Export failed — no openvino_model.xml in ${dest}"
-        exit 1
+        return 1
     fi
 }
 
 echo -e "${CYAN}[ Info ]${NC} Downloading and converting GenAI models..."
 
+failed=0
 for entry in "${MODELS[@]}"; do
     IFS='|' read -r short_name hf_id model_type <<< "${entry}"
     echo ""
     echo -e "${GREEN}=== ${short_name} (${hf_id}) ===${NC}"
 
-    export_model "${short_name}" "${hf_id}" "int8" "${model_type}"
+    export_model "${short_name}" "${hf_id}" "int8" "${model_type}" || { echo -e "${RED}[ FAILED ]${NC} ${short_name} int8"; ((failed++)) || true; }
     echo ""
-    export_model "${short_name}" "${hf_id}" "int4" "${model_type}"
+    export_model "${short_name}" "${hf_id}" "int4" "${model_type}" || { echo -e "${RED}[ FAILED ]${NC} ${short_name} int4"; ((failed++)) || true; }
 done
+
+if [[ ${failed} -gt 0 ]]; then
+    echo -e "${RED}[ Error ]${NC} ${failed} model export(s) failed"
+    deactivate
+    exit 1
+fi
 
 deactivate
 

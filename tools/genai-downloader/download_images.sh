@@ -35,6 +35,7 @@ fi
 # Resize to target VLM input resolutions
 SIZES=("224x224" "448x448" "640x640" "1080x1920")
 
+failed=0
 for size in "${SIZES[@]}"; do
     outfile="${imgdir}/coco_${size}.jpg"
     if [[ -f "${outfile}" ]]; then
@@ -48,7 +49,12 @@ img = Image.open('${COCO_ORIGINAL}')
 w, h = '${size}'.split('x')
 img_resized = img.resize((int(w), int(h)), Image.LANCZOS)
 img_resized.save('${outfile}', 'JPEG', quality=95)
-"
+" || { echo -e "${RED}[ FAILED ]${NC} Failed to resize to ${size}"; ((failed++)) || true; continue; }
 done
 
 echo -e "${GREEN}[ Pass ]${NC} VLM test images ready in collateral/media/images/"
+
+if [[ ${failed} -gt 0 ]]; then
+    echo -e "${RED}[ Error ]${NC} ${failed} resize(s) failed"
+    exit 1
+fi
