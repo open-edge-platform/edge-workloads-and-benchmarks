@@ -18,9 +18,10 @@ Edge Workloads and Benchmarks is a benchmarking suite for validating media and e
 Repository validated on Ubuntu OS version 24.04.4 LTS with kernel version 6.16
 - GPU with video acceleration API (VA-API) media support
 - 16+ GB Memory
-- 65GB storage space (15GB without GenAI models)
+- 128 GB storage space (16 GB without GenAI models)
 - **Optional:** integrated NPU
 
+**Note:** GenAI models require more storage space for the original HuggingFace model, then INT8 and INT4 quantizations. 128 GB of storage is recommended for the initial setup process. Once the model is quantized, you can delete the original Huggingface model in `~/.cache/huggingface/hub/` and the Python3 virtual environments for model conversion in `tools/genai-downloader/`.
 ### Software Requirements
 - Docker software version 20.10 and above ([installation guide](https://docs.docker.com/engine/install/ubuntu/))
 - Python programming language version 3.10 and above with virtual environment (venv) support
@@ -54,6 +55,7 @@ Cleanup:
   sudo make clean-results     Optional: Remove benchmark results
   sudo make clean-all         Optional: Remove all generated content
 ```
+**Note:** GPU and NPU compute drivers are installed by **default**. In order to skip driver installation, set `INCLUDE_GPU=False` or `INCLUDE_NPU=False` respectively.
 
 ### Quick Start
 ```bash

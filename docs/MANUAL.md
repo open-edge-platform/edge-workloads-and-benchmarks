@@ -1,11 +1,11 @@
 # Manual Setup
 
-If you prefer step-by-step control over the automated `make` workflow, follow these instructions.
+If you prefer step-by-step control over the automated `make` workflow, follow these instructions. All relative directory navigation assumes starting at the repository root.
 
 ## Step 1. Prerequisites
 
 ```bash
-cd setup/
+cd ./setup/
 ./install_prerequisites.sh
 # Optional: --reinstall-gpu-driver=yes and/or --reinstall-npu-driver=yes
 ```
@@ -13,7 +13,7 @@ cd setup/
 ## Step 2. Vision Models
 
 ```bash
-cd ../tools/model-conversion/
+cd ./tools/model-conversion/
 ./convert_models.sh
 # Optional: -i "$HOME/datasets/imagenet-packages" for ImageNet accuracy validation
 ```
@@ -21,7 +21,7 @@ cd ../tools/model-conversion/
 ## Step 3. GenAI Models
 
 ```bash
-cd ../tools/genai-downloader/
+cd ./tools/genai-downloader/
 ./download_models.sh
 ./download_minicpm.sh
 ./download_gemma3.sh
@@ -31,7 +31,7 @@ cd ../tools/genai-downloader/
 ## Step 4. Media
 
 ```bash
-cd ../media-downloader/
+cd ./tools/media-downloader/
 ./download_and_encode.sh
 ```
 
@@ -40,7 +40,7 @@ cd ../media-downloader/
 ### Edge AI Pipelines
 
 ```bash
-cd ../../workloads/edge-ai-pipelines/
+cd ./workloads/edge-ai-pipelines/
 ./benchmark_edge_pipelines.sh \
 	-p <light|medium|heavy> \
 	-n <num_streams> \
@@ -57,7 +57,7 @@ cd ../../workloads/edge-ai-pipelines/
 ### Vision Benchmarks
 
 ```bash
-cd ../vision-benchmarks/
+cd ./workloads/vision-benchmarks/
 make setup    # First time only: create venv + install OpenVINO
 ./benchmark_vision.sh -m <model_path> -d <device> -i <duration_sec> -t <scheduling_core_type>
 
@@ -68,7 +68,7 @@ make setup    # First time only: create venv + install OpenVINO
 ### Media Benchmarks
 
 ```bash
-cd ../media-benchmarks/
+cd ./workloads/media-benchmarks/
 ./benchmark_media.sh -m <media_file> -n <num_streams> -i <duration_sec> -t <scheduling_core_type>
 
 # Example
@@ -78,7 +78,7 @@ cd ../media-benchmarks/
 ### GenAI Benchmarks
 
 ```bash
-cd ../genai-benchmarks/
+cd ./workloads/genai-benchmarks/
 make setup       # First time only: create venv, install deps, clone openvino.genai
 make collateral  # First time only: download and convert models
 
@@ -99,9 +99,8 @@ make collateral  # First time only: download and convert models
 
 ```bash
 # Generate and view dashboard (from repository root)
-cd ../..
-python3 tools/html/generate_report.py
-cd tools/html && python3 -m http.server 8000  # Access at http://localhost:8000
+python3 ./tools/html/generate_report.py
+cd ./tools/html && python3 -m http.server 8000  # Access at http://localhost:8000
 ```
 
 Or use the Makefile from the repository root:
