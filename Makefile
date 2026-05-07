@@ -74,7 +74,7 @@ prereqs:
 collateral:
 	@enabled=0; \
 	if echo "$(INCLUDE_GENAI)" | grep -qiE '^(true|yes)$$'; then \
-		export HF_TOKEN=$$(bash utils/check_hf_token.sh) || exit 1; \
+		bash utils/check_hf_token.sh || exit 1; \
 	fi; \
 	if echo "$(INCLUDE_VISION)" | grep -qiE '^(true|yes)$$'; then \
 		enabled=$$((enabled + 1)); \

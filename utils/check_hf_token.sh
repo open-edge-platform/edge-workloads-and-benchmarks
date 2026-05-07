@@ -4,8 +4,10 @@
 # SPDX-License-Identifier: Apache-2.0
 
 # ==============================================================================
-# Prompts user to input their Hugging Face token and checks for gated access to required models
-# Uses HF_TOKEN environment variable if already set. Prints token to terminal
+# Ensures a Hugging Face token is available for gated model downloads.
+# Checks HF_TOKEN env var and ~/.cache/huggingface/token cache file.
+# If neither exists, prompts the user and persists to the cache file.
+# Exits 0 if a token is available, 1 otherwise. Never prints the token.
 # ==============================================================================
 
 set -e
@@ -19,21 +21,22 @@ else
     RED=''; GREEN=''; YELLOW=''; CYAN=''; NC=''
 fi
 
-# Checks if token already exists
+# Token already available via environment variable — persist to cache if missing
 if [[ -n "${HF_TOKEN:-}" ]]; then
-    echo "${HF_TOKEN}"
+    if [[ ! -f "${HF_TOKEN_FILE}" ]]; then
+        mkdir -p "$(dirname "${HF_TOKEN_FILE}")"
+        printf '%s' "${HF_TOKEN}" > "${HF_TOKEN_FILE}"
+        chmod 600 "${HF_TOKEN_FILE}"
+    fi
     exit 0
 fi
 
+# Token already cached
 if [[ -f "${HF_TOKEN_FILE}" ]]; then
-    cat "${HF_TOKEN_FILE}"
     exit 0
 fi
 
 # Interactive prompts checking if the user has a token and is authenticated
-exec 3>&1  # save stdout
-exec 1>&2  # redirect stdout to stderr for prompts
-
 echo ""
 echo -e "${GREEN}=== GenAI: Hugging Face Token Setup ===${NC}"
 echo ""
@@ -77,8 +80,10 @@ if [[ -z "${hf_token_input}" ]]; then
     exit 1
 fi
 
-echo -e "${CYAN}[ Info ]${NC} Token set for this session."
-echo ""
+# Persist token to HF cache file
+mkdir -p "$(dirname "${HF_TOKEN_FILE}")"
+printf '%s' "${hf_token_input}" > "${HF_TOKEN_FILE}"
+chmod 600 "${HF_TOKEN_FILE}"
 
-# Print token to terminal
-echo "${hf_token_input}" >&3
+echo -e "${CYAN}[ Info ]${NC} Token saved to ${HF_TOKEN_FILE}."
+echo ""
