@@ -38,7 +38,7 @@ verify:
 .PHONY: clean
 clean:
 	@printf "\033[0;36m[ Info ]\033[0m Removing transcoded media from collateral...\n"
-	@rm -f "$(COLLATERAL)/bears.h265" "$(COLLATERAL)/apple.h265"
-	@rm -f "$(COLLATERAL)/bears.h264" "$(COLLATERAL)/apple.h264"
-	@rm -f "$(COLLATERAL)/bears_4k.h265" "$(COLLATERAL)/apple_4k.h265"
-	@rm -f "$(COLLATERAL)/bears_4k.h264" "$(COLLATERAL)/apple_4k.h264"
+	@rm -f "$(COLLATERAL)/hevc/apple_1080.h265" "$(COLLATERAL)/hevc/bears_1080.h265"
+	@rm -f "$(COLLATERAL)/hevc/apple_4k.h265" "$(COLLATERAL)/hevc/bears_4k.h265"
+	@rm -f "$(COLLATERAL)/avc/apple_1080.h264" "$(COLLATERAL)/avc/bears_1080.h264"
+	@rm -f "$(COLLATERAL)/avc/apple_4k.h264" "$(COLLATERAL)/avc/bears_4k.h264"
