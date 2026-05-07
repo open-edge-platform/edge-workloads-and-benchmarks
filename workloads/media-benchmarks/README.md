@@ -4,7 +4,7 @@ Video decode benchmarks using [VA-API](https://github.com/intel/libva) via [GStr
 
 #### Key Metrics
  - Decode Throughput (FPS)
- - Estimted Stream Density @ 30fps per stream (#)
+ - Estimated Stream Density @ 30fps per stream (#)
  - Package Power (W)
  - Power Efficiency (FPS per W)
 
@@ -73,6 +73,6 @@ make benchmarks
 
 **Examples:**
 ```bash
-./benchmark_media.sh -m bears.h265 -n 8 -i 120
+./benchmark_media.sh -m bears_1080.h265 -n 8 -i 120
 ./benchmark_media.sh -m bears_4k.h264 -n 1 -i 60 -t ecore
 ```

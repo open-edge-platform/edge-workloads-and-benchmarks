@@ -4,7 +4,7 @@ Media + AI benchmarks using Deep Learning Streamer ([DL Streamer](https://github
 
 #### Key Metrics
  - Pipeline Throughput (FPS)
- - Estimted Stream Density @ 30fps per stream (#)
+ - Estimated Stream Density @ 30fps per stream (#)
  - Package Power (W)
  - Power Efficiency (FPS per W)
 

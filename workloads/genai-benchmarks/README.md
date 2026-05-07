@@ -26,7 +26,7 @@ Benchmarks:
   Options:
     DRY_RUN                   Lists all benchmark configurations without running (default: False)
     RESUME                    Skip tests that already have results (default: False)
-    DURATION                  Set the duration for each benchmark test (default: 120 seconds)
+    DURATION                  Set the duration for each benchmark test (default: 60 seconds)
     POWER                     Enable/Disable power/efficiency metrics (default: True, requires sudo)
     CORES                     Pin the cores for scheduling workload.  (default: all cores)
                               Accepts the following: pcore, ecore, and min-max range (example: 0-11)

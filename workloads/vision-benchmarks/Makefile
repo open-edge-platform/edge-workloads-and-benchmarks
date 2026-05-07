@@ -35,7 +35,7 @@ help:
 	@echo "  Options:"
 	@echo "    DRY_RUN                   Lists all benchmark configurations without running (default: False)"
 	@echo "    RESUME                    Skip tests that already have results (default: False)"
-	@echo "    DURATION                  Set the duration for each benchmark test (default: 120 seconds)"
+	@echo "    DURATION                  Set the duration for each benchmark test (default: 60 seconds)"
 	@echo "    POWER                     Enable/Disable power/efficiency metrics (default: True, requires sudo)"
 	@echo "    CORES                     Pin the cores for scheduling workload.  (default: all cores)"
 	@echo "                              Accepts the following: pcore, ecore, and min-max range (example: 0-11)"
