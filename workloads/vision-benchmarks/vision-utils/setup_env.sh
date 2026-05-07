@@ -17,6 +17,6 @@ python3 -m venv "${venvdir}"
 
 source "${venvdir}/bin/activate"
 pip install --upgrade pip
-pip install openvino
+pip install openvino==2026.1.0
 deactivate
 echo "[ Info ] Setup complete."

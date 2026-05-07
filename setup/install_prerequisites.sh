@@ -233,6 +233,8 @@ install_packages \
     apt-transport-https \
     ca-certificates \
     curl \
+    bc \
+    jq \
     gnupg \
     lsb-release \
     software-properties-common \
