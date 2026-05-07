@@ -253,15 +253,13 @@ echo ""
 install_docker
 
 need_to_logout=0
-add_user_to_group docker
-if [ $? -eq 1 ]; then
+if ! add_user_to_group docker; then
     need_to_logout=1
 fi
 
 # Add user to render group for GPU/NPU compute access
 if [ -d /dev/dri ]; then
-    add_user_to_group render
-    if [ $? -eq 1 ]; then
+    if ! add_user_to_group render; then
         need_to_logout=1
     fi
 fi

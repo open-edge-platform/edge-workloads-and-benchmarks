@@ -57,14 +57,20 @@ declare -a packages=(
 )
 
 # Download packages if not already present
+download_failed=0
 for url in "${packages[@]}"; do
     filename=$(basename "$url")
     if [ -f "$filename" ]; then
         echo -e "${CYAN}[ Info ]${NC} $filename already downloaded, skipping"
     else
-        wget -q --show-progress "$url"
+        wget -q --show-progress "$url" || { echo -e "${RED}[ FAILED ]${NC} Failed to download $filename"; download_failed=1; }
     fi
 done
+
+if [[ "${download_failed}" -eq 1 ]]; then
+    echo -e "${RED}[ Error ]${NC} Some packages failed to download. Please retry."
+    exit 1
+fi
 
 echo ""
 echo -e "${CYAN}[ Info ]${NC} Installing OpenCL ICD loader..."
