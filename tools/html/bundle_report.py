@@ -4,7 +4,10 @@
 """Bundle the HTML dashboard into a single self-contained HTML file.
 
 Usage:
-    python3 bundle_report.py [output_path]
+    python3 bundle_report.py [report_name]
+
+Output is written to collateral/reports/<timestamp>/<report_name>.html.
+Defaults to "report" if no name is provided.
 
 The output file contains all CSS, JS (including Chart.js), and benchmark
 data inlined — no external dependencies, no server required.
