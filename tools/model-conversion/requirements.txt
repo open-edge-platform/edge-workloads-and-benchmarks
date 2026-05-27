@@ -9,5 +9,6 @@ psutil
 requests
 scipy
 ultralytics==8.3.59
-kagglehub
+kagglehub==1.0.1
+kagglesdk==0.1.23
 opencv-python
