@@ -1,0 +1,26 @@
+{
+  "assets": {
+    "input_video": "obj_classification.mp4",
+    "detection_model": "public/yolo11n"
+  },
+  "pipelines": [
+    {
+      "name": "goods-detection",
+      "mode": "default",
+      "pipeline": [
+        "filesrc location=\"${video-path}\" ! decodebin3 !",
+        "gvadetect model=\"${det-model-path}\"",
+        "  model-instance-id=detect0",
+        "  device=${detect_device} pre-process-backend=${detect_pre_process_backend}",
+        "  batch-size=1 ${detect_ie_config} nireq=${detect_nireq}",
+        "  threshold=0.5 !",
+        "gvafpscounter starting-frame=100 !",
+        "gvawatermark !",
+        "gvametaconvert !",
+        "queue !",
+        "gvametapublish file-format=json-lines file-path=/dev/null !",
+        "fakesink sync=false async=false"
+      ]
+    }
+  ]
+}

@@ -34,6 +34,47 @@ _YOLOV5_BASE = (
     "https://raw.githubusercontent.com/dlstreamer/pipeline-zoo-models/"
     "refs/heads/main/storage/yolov5m-640_INT8"
 )
+_EFFICIENTNET_BASE = (
+    "https://raw.githubusercontent.com/dlstreamer/pipeline-zoo-models/"
+    "refs/heads/main/storage/efficientnet-b0_INT8"
+)
+_OMZ_BASE = (
+    "https://storage.openvinotoolkit.org/repositories/open_model_zoo/"
+    "2023.0/models_bin/1"
+)
+_MODEL_PROC_BASE = (
+    "https://raw.githubusercontent.com/open-edge-platform/dlstreamer/"
+    "refs/heads/main/samples/gstreamer/model_proc"
+)
+_EDGE_AI_RESOURCES = (
+    "https://github.com/open-edge-platform/edge-ai-resources/raw/main/models"
+)
+
+# =========================================================================== #
+#  Video download registry — maps local filenames to download URLs            #
+#  Sources: VIPPET default_recordings.yaml                                    #
+# =========================================================================== #
+
+_VIDEOS = {
+    "warehouse.avi": (
+        "https://github.com/open-edge-platform/edge-ai-resources/raw/"
+        "c13b8dbf23d514c2667d39b66615bd1400cb889d/videos/warehouse.avi"
+    ),
+    "license-plate-detection.mp4": (
+        "https://github.com/open-edge-platform/edge-ai-resources/raw/"
+        "6d452bf87bb1707630f747774d2d15caa1a6f7aa/videos/ParkingVideo.mp4"
+    ),
+    "obj_classification.mp4": (
+        "https://www.pexels.com/download/video/6891009"
+    ),
+    "age_prediction.mp4": (
+        "https://www.pexels.com/download/video/3249935"
+    ),
+    "traffic.mp4": (
+        "https://videos.pexels.com/video-files/1192116/"
+        "1192116-sd_640_360_30fps.mp4"
+    ),
+}
 
 
 # =========================================================================== #
@@ -88,12 +129,104 @@ _MODELS = {
         "labels":      _LABELS,
     },
     "public/yolov8_license_plate_detector": {
+        "zip_url":     f"{_EDGE_AI_RESOURCES}/license-plate-reader.zip",
+        "zip_files": [
+            ("license-plate-reader/models/yolov8n/yolov8n_retrained.xml",
+             "models/yolov8-lpr/yolov8_license_plate_detector.xml"),
+            ("license-plate-reader/models/yolov8n/yolov8n_retrained.bin",
+             "models/yolov8-lpr/yolov8_license_plate_detector.bin"),
+        ],
         "cache_dir":   "models/yolov8-lpr",
         "xml":         "yolov8_license_plate_detector.xml",
     },
     "public/ch_PP-OCRv4_rec_infer": {
+        "zip_url":     f"{_EDGE_AI_RESOURCES}/license-plate-reader.zip",
+        "zip_files": [
+            ("license-plate-reader/models/ch_PP-OCRv4_rec_infer/ch_PP-OCRv4_rec_infer.xml",
+             "models/ppocr-v4/ch_PP-OCRv4_rec_infer.xml"),
+            ("license-plate-reader/models/ch_PP-OCRv4_rec_infer/ch_PP-OCRv4_rec_infer.bin",
+             "models/ppocr-v4/ch_PP-OCRv4_rec_infer.bin"),
+        ],
         "cache_dir":   "models/ppocr-v4",
         "xml":         "ch_PP-OCRv4_rec_infer.xml",
+    },
+    "public/pallet_defect_detection": {
+        "zip_url":     f"{_EDGE_AI_RESOURCES}/INT8/pallet_defect_detection.zip",
+        "zip_files": [
+            ("pallet_defect_detection/deployment/Detection/model/model.xml",
+             "models/pallet-defect-detection/pallet_defect_detection.xml"),
+            ("pallet_defect_detection/deployment/Detection/model/model.bin",
+             "models/pallet-defect-detection/pallet_defect_detection.bin"),
+        ],
+        "cache_dir":   "models/pallet-defect-detection",
+        "xml":         "pallet_defect_detection.xml",
+    },
+    # ── OMZ models (pre-trained, downloaded from OpenVINO storage) ──────── #
+    "omz/face-detection-retail-0004": {
+        "urls": [
+            (f"{_OMZ_BASE}/face-detection-retail-0004/FP16/face-detection-retail-0004.xml",
+             "models/face-detection-retail-0004/face-detection-retail-0004.xml"),
+            (f"{_OMZ_BASE}/face-detection-retail-0004/FP16/face-detection-retail-0004.bin",
+             "models/face-detection-retail-0004/face-detection-retail-0004.bin"),
+        ],
+        "model_proc": ("face-detection-retail-0004.json",
+                       f"{_MODEL_PROC_BASE}/intel/face-detection-retail-0004.json"),
+        "cache_dir":   "models/face-detection-retail-0004",
+        "xml":         "face-detection-retail-0004.xml",
+    },
+    "omz/age-gender-recognition-retail-0013": {
+        "urls": [
+            (f"{_OMZ_BASE}/age-gender-recognition-retail-0013/FP16/age-gender-recognition-retail-0013.xml",
+             "models/age-gender-recognition-retail-0013/age-gender-recognition-retail-0013.xml"),
+            (f"{_OMZ_BASE}/age-gender-recognition-retail-0013/FP16/age-gender-recognition-retail-0013.bin",
+             "models/age-gender-recognition-retail-0013/age-gender-recognition-retail-0013.bin"),
+        ],
+        "model_proc": ("age-gender-recognition-retail-0013.json",
+                       f"{_MODEL_PROC_BASE}/intel/age-gender-recognition-retail-0013.json"),
+        "cache_dir":   "models/age-gender-recognition-retail-0013",
+        "xml":         "age-gender-recognition-retail-0013.xml",
+    },
+    # ── Ultralytics YOLO models (download + INT8 quantization) ─────────── #
+    "public/yolo11n": {
+        "downloader":  [_VENV, f"{_SCRIPTS}/yolo_downloader.py",
+                        "-m", "yolo11n", "-i", _CACHE, "-o", _OUTPUT],
+        "pre_setup":   [_VENV, f"{_SCRIPTS}/initialize_ultralytics.py",
+                        "-i", _CACHE],
+        "cache_dir":   "models/yolo11n",
+        "xml":         "yolo11n_int8.xml",
+    },
+    "public/yolov8n": {
+        "downloader":  [_VENV, f"{_SCRIPTS}/yolo_downloader.py",
+                        "-m", "yolov8n", "-i", _CACHE, "-o", _OUTPUT],
+        "pre_setup":   [_VENV, f"{_SCRIPTS}/initialize_ultralytics.py",
+                        "-i", _CACHE],
+        "cache_dir":   "models/yolov8n",
+        "xml":         "yolov8n_int8.xml",
+    },
+    "public/yolo11s": {
+        "downloader":  [_VENV, f"{_SCRIPTS}/yolo_downloader.py",
+                        "-m", "yolo11s", "-i", _CACHE, "-o", _OUTPUT],
+        "pre_setup":   [_VENV, f"{_SCRIPTS}/initialize_ultralytics.py",
+                        "-i", _CACHE],
+        "cache_dir":   "models/yolo11s",
+        "xml":         "yolo11s.xml",
+    },
+    "public/colorcls2": {
+        "cache_dir":   "models/colorcls2",
+        "xml":         "colorcls2.xml",
+    },
+    # ── Pipeline-zoo-models (pre-converted, GitHub download) ───────────── #
+    "pipeline-zoo-models/efficientnet-b0_INT8": {
+        "urls": [
+            (f"{_EFFICIENTNET_BASE}/FP16-INT8/efficientnet-b0.xml",
+             "models/efficientnet-b0/efficientnet-b0.xml"),
+            (f"{_EFFICIENTNET_BASE}/FP16-INT8/efficientnet-b0.bin",
+             "models/efficientnet-b0/efficientnet-b0.bin"),
+        ],
+        "model_proc": ("preproc-aspect-ratio.json",
+                       f"{_MODEL_PROC_BASE}/public/preproc-aspect-ratio.json"),
+        "cache_dir":   "models/efficientnet-b0",
+        "xml":         "efficientnet-b0.xml",
     },
 }
 
@@ -235,7 +368,8 @@ def _download_url(url, dest):
     dest.parent.mkdir(parents=True, exist_ok=True)
     print(f"    Downloading {dest.name}...")
     try:
-        resp = urllib.request.urlopen(url, timeout=300)  # nosec B310 — scheme validated by _validate_url()
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+        resp = urllib.request.urlopen(req, timeout=300)  # nosec B310 — scheme validated by _validate_url()
         with open(dest, "wb") as f:
             shutil.copyfileobj(resp, f)
     except (urllib.error.URLError, OSError) as exc:
@@ -266,6 +400,32 @@ def _download_model(asset_id):
             dest_path = ASSETS_DIR / dest_rel
             if not dest_path.is_file():
                 _download_url(url, dest_path)
+    elif "zip_url" in entry:
+        # Download ZIP, extract specific files to target paths
+        import io
+        import zipfile
+
+        zip_url = entry["zip_url"]
+        zip_files = entry["zip_files"]
+        _validate_url(zip_url)
+        print(f"    Downloading {zip_url.rsplit('/', 1)[-1]}...")
+        try:
+            resp = urllib.request.urlopen(zip_url, timeout=300)  # nosec B310
+            zip_data = io.BytesIO(resp.read())
+        except (urllib.error.URLError, OSError) as exc:
+            raise PipelineZooError(
+                f"Download failed for {zip_url}: {exc}") from exc
+        with zipfile.ZipFile(zip_data) as zf:
+            for src_path, dest_rel in zip_files:
+                dest_path = ASSETS_DIR / dest_rel
+                dest_path.parent.mkdir(parents=True, exist_ok=True)
+                # Validate that src_path exists in the ZIP and is safe
+                if src_path not in zf.namelist():
+                    raise PipelineZooError(
+                        f"File '{src_path}' not found in {zip_url}")
+                with zf.open(src_path) as src, open(dest_path, "wb") as dst:
+                    shutil.copyfileobj(src, dst)
+                print(f"    Extracted {dest_path.name}")
     elif "downloader" in entry:
         # Run downloader script via docker exec
         if "pre_setup" in entry:
@@ -341,7 +501,10 @@ def ensure_assets(pipeline_dir, mode, data=None, asset_port=None):
         print(f"    [{key}] {asset_id}{tag}")
     for key, url in missing_videos:
         vreg = resolve_video(url)
-        print(f"    [{key}] {vreg['mp4_name']} (download + transcode + loop)")
+        if not url.startswith("http") and url in _VIDEOS:
+            print(f"    [{key}] {vreg['mp4_name']} (download)")
+        else:
+            print(f"    [{key}] {vreg['mp4_name']} (download + transcode + loop)")
 
     print("\n  Downloading missing assets...")
     print()
@@ -355,10 +518,17 @@ def ensure_assets(pipeline_dir, mode, data=None, asset_port=None):
         generate_env_file("/dev/null", DEFAULT_IMAGE, REST_PORT, RTSP_PORT)
 
     # ── Start assets-download container if anything is missing ───────────────
+    # Direct-download videos (local filename with URL in _VIDEOS) don't need
+    # the Docker container — only Pexels URLs that require transcode do.
+    pexels_videos = [(k, u) for k, u in missing_videos
+                     if u.startswith("http") or u not in _VIDEOS]
+    direct_videos = [(k, u) for k, u in missing_videos
+                     if not u.startswith("http") and u in _VIDEOS]
+
     needs_container = any(
         "downloader" in _MODELS[a]
         for _k, a in missing_models
-    ) or bool(missing_videos)
+    ) or bool(pexels_videos)
 
     if needs_container:
         print("  Starting assets-download container...")
@@ -373,11 +543,20 @@ def ensure_assets(pipeline_dir, mode, data=None, asset_port=None):
         _download_model(asset_id)
         print()
 
-    # ── Phase 2: Video download + transcode ─────────────────────────────────
-    if missing_videos:
+    # ── Phase 2a: Direct video downloads (from _VIDEOS registry) ──────────
+    for _key, filename in direct_videos:
+        vreg = resolve_video(filename)
+        dst = ASSETS_DIR / vreg["check_file"]
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        print(f"  Downloading {filename}...")
+        _download_url(_VIDEOS[filename], dst)
+        print()
+
+    # ── Phase 2b: Video download + transcode (Pexels URLs) ─────────────────
+    if pexels_videos:
         print("  Starting video download + transcode...")
         video_args = []
-        for _key, url in missing_videos:
+        for _key, url in pexels_videos:
             vreg = resolve_video(url)
             video_args.extend([
                 "--url", url,

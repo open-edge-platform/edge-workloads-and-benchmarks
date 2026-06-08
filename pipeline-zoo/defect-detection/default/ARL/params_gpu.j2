@@ -1,0 +1,10 @@
+{# Optimized gpu parameters for defect-detection #}
+
+{% set detect_batch_size = "16" %}
+{% set detect_device = "GPU" %}
+{% set detect_ie_config = "ie-config=GPU_THROUGHPUT_STREAMS" %}
+{% set detect_inference_interval = "1" %}
+{% set detect_inference_region = "full-frame" %}
+{% set detect_nireq = "2" %}
+{% set detect_pre_process_backend = "va-surface-sharing" %}
+{% set detect_threshold = "0.7" %}

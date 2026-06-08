@@ -1,0 +1,26 @@
+{
+  "assets": {
+    "input_video": "traffic.mp4",
+    "detection_model": "public/yolov8n"
+  },
+  "pipelines": [
+    {
+      "name": "motion-detection",
+      "mode": "default",
+      "pipeline": [
+        "filesrc location=\"${video-path}\" ! decodebin3 !",
+        "gvamotiondetect motion-threshold=0.07 min-persistence=2 !",
+        "gvadetect model=\"${det-model-path}\"",
+        "  model-instance-id=detect0",
+        "  device=${detect_device} pre-process-backend=${detect_pre_process_backend}",
+        "  inference-region=roi-list !",
+        "gvametaconvert format=json !",
+        "gvametapublish method=file file-format=json-lines file-path=/dev/null !",
+        "gvafpscounter starting-frame=100 !",
+        "gvawatermark !",
+        "videoconvert !",
+        "fakesink sync=false async=false"
+      ]
+    }
+  ]
+}

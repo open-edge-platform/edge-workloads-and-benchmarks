@@ -1,33 +1,34 @@
 {
   "assets": {
-    "input_video": "license-plate-detection.mp4",
-    "detection_model": "public/yolov8_license_plate_detector",
-    "classification_model": "public/ch_PP-OCRv4_rec_infer"
+    "input_video": "metro_smart_parking.mp4",
+    "detection_model": "public/yolo11s",
+    "classification_model": "public/colorcls2"
   },
   "pipelines": [
     {
-      "name": "license-plate-recognition",
+      "name": "smart-parking",
       "mode": "default",
       "pipeline": [
         "filesrc location=\"${video-path}\" ! decodebin3 !",
-        "gvafpscounter starting-frame=500 !",
         "gvadetect model=\"${det-model-path}\"",
+        "  model-proc=/opt/intel/dlstreamer/samples/gstreamer/model_proc/public/yolo-v8.json",
         "  model-instance-id=detect0",
         "  device=${detect_device} pre-process-backend=${detect_pre_process_backend}",
-        "  batch-size=0 nireq=0 ${detect_ie_config}",
-        "  inference-interval=3 inference-region=full-frame !",
+        "  batch-size=1 ${detect_ie_config} nireq=${detect_nireq}",
+        "  threshold=0.7 inference-interval=3 inference-region=full-frame !",
         "queue !",
         "gvatrack tracking-type=short-term-imageless !",
         "queue !",
         "gvaclassify model=\"${class-model-path}\"",
         "  model-instance-id=classify0",
         "  device=${classify_0_device} pre-process-backend=${classify_0_pre_process_backend}",
-        "  batch-size=${classify_0_batch_size} nireq=${classify_0_nireq} ${classify_0_ie_config}",
-        "  inference-interval=3 inference-region=roi-list reclassify-interval=1 !",
+        "  batch-size=1 ${classify_0_ie_config} nireq=${classify_0_nireq}",
+        "  inference-interval=3 inference-region=roi-list !",
         "queue !",
         "gvawatermark !",
-        "gvametaconvert format=json !",
-        "gvametapublish method=file file-path=/dev/null !",
+        "gvametaconvert add-empty-results=true !",
+        "queue !",
+        "gvafpscounter starting-frame=100 !",
         "fakesink sync=false async=false"
       ]
     }

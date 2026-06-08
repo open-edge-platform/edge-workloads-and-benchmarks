@@ -1,12 +1,11 @@
-{# GPU+NPU device parameters for license-plate-recognition #}
+{# Optimized gpu_npu parameters for license-plate-recognition #}
 
-{% set detect_device = "GPU" %}
-{% set detect_pre_process_backend = "va-surface-sharing" %}
-{% set detect_ie_config = "ie-config=GPU_THROUGHPUT_STREAMS=2" %}
-{% set detect_batch_size = "0" %}
-{% set detect_nireq = "0" %}
-{% set classify_0_device = "NPU" %}
-{% set classify_0_pre_process_backend = "va" %}
-{% set classify_0_ie_config = "" %}
 {% set classify_0_batch_size = "1" %}
+{% set classify_0_device = "NPU" %}
+{% set classify_0_ie_config = "" %}
 {% set classify_0_nireq = "2" %}
+{% set classify_0_pre_process_backend = "va" %}
+{% set detect_device = "GPU" %}
+{% set detect_ie_config = "ie-config=GPU_THROUGHPUT_STREAMS=2" %}
+{% set detect_nireq = "0" %}
+{% set detect_pre_process_backend = "va-surface-sharing" %}

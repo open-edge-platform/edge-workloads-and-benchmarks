@@ -59,6 +59,10 @@ def render_pipeline(pipeline_dir, params_file, data=None):
     # Inject labels into gvaclassify elements that lack them
     pipeline_str = _inject_classify_labels(pipeline_str, assets)
 
+    # Strip empty-value properties (e.g. "batch-size= nireq=") left by
+    # device params that set a variable to "".
+    pipeline_str = re.sub(r"\b\w[\w-]+=(?=\s|!|$)", "", pipeline_str)
+
     # Clean up residue from empty variable expansion
     pipeline_str = re.sub(r"  +", " ", pipeline_str).strip()
 

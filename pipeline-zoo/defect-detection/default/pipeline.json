@@ -1,0 +1,26 @@
+{
+  "assets": {
+    "input_video": "warehouse.avi",
+    "detection_model": "public/pallet_defect_detection"
+  },
+  "pipelines": [
+    {
+      "name": "defect-detection",
+      "mode": "default",
+      "pipeline": [
+        "filesrc location=\"${video-path}\" ! decodebin3 !",
+        "gvadetect model=\"${det-model-path}\"",
+        "  model-instance-id=detect0",
+        "  device=${detect_device} pre-process-backend=${detect_pre_process_backend}",
+        "  batch-size=${detect_batch_size} nireq=${detect_nireq} ${detect_ie_config}",
+        "  inference-region=${detect_inference_region} inference-interval=${detect_inference_interval} threshold=${detect_threshold} !",
+        "queue !",
+        "gvawatermark !",
+        "gvametaconvert add-empty-results=true !",
+        "queue !",
+        "gvafpscounter starting-frame=100 !",
+        "fakesink sync=false async=false"
+      ]
+    }
+  ]
+}
